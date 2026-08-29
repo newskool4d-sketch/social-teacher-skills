@@ -371,7 +371,8 @@ secondary는 사회 관련 topic 252건 중 **251건**이 이 상태다(직접 �
 
 이 git 스냅샷(HEAD `e5c2c6b4`) 한정으로, `data/kr/manifest.json`이 **같은 클론 안의 실제 데이터
 파일과 전부 어긋나 있다** (5개 파일 전부 바이트 수·sha256 불일치, `manifest.json`이 참조하는
-`*.seed.json` 8개·`workstreams/*.json` 9개는 아예 존재하지 않음 — v0.4 모노레포 시절의 낡은
+`*.seed.json` 4개(`clusters.seed.json`, `curriculum-standards.seed.json`, `dependencies.seed.json`,
+`topics.seed.json`)·`workstreams/*.json` 9개는 아예 존재하지 않음 — v0.4 모노레포 시절의 낡은
 manifest로 보인다). `src/data-store.mjs`의 `readVerified()`는 체크섬이 안 맞으면 `throw`하므로,
 **이 git 클론을 그대로 실행하면(`node src/cli.mjs`) 서버가 기동을 거부한다.**
 
