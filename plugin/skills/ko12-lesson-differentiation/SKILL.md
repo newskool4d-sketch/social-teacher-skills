@@ -294,7 +294,7 @@ JSON의 `shared` 블록에 **한 번만** 쓰고 각 문서는 `{"type": "from_s
    | `callout` `kind: student-task` | 학생이 하는 과제: 앵커 과제, 정리 문항, 수업안에 보이는 수준별 과제. |
    | `callout` `kind: teacher-note` | 교사가 읽되 소리 내 말하지 않는 곁말: 개별 지도 발문, 관찰 지점. |
    | `callout` `kind: student-note` | 학생이 학습지에서 읽는 알림: 힌트 카드, 핵심 사실. |
-   | `list` `ordered: true` | 번호가 있는 순서 — 과제 세트, 실험 절차. 아니면 순서 없이. |
+   | `list` `ordered: true` | 번호가 있는 순서 — 과제 세트, 조사 절차. 아니면 순서 없이. |
    | `cards` | 길이가 비슷한 2–4개 병렬 항목 — 수준 요약, 분류 기준. |
    | `table` (`headers` 없이) | 용어–뜻 쌍, 라벨–값 참조 행. |
    | `table` (`headers` 있게) | 열 이름이 있는 진짜 표 자료(수준별 스캐폴드, 예상되는 학생 생각). |

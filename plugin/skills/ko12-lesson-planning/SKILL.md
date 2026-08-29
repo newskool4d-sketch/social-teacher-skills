@@ -40,8 +40,8 @@ students.
 ## Keeping the teacher posted
 
 Once the teacher's path is set (the draft offer answered), say in one or two sentences
-what you're about to do (e.g. *"성취기준을 조회하고 선수 학습·세부 주제를 확인한 뒤,
-수업안·학생 자료·관찰 템플릿을 만들게요."*).
+what you're about to do (e.g. *"인권 단원 성취기준을 조회하고 선수 학습·세부 주제를 확인한
+뒤, 수업안·학생 자료·관찰 템플릿을 만들게요."*).
 
 When a task-list or to-do tool is available, also outline this skill's steps there so the
 teacher can watch them check off; the only reason to skip this is that no such tool exists
