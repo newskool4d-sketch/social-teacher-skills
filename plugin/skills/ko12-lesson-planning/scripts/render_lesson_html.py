@@ -189,7 +189,7 @@ def render_block(blk: dict, theme: Theme) -> str:
                           if blk.get(k))
         title = md(blk.get("title", ""))
         excerpt = md(blk.get("excerpt") or blk.get("text") or "")
-        meta = f"<span class=\"sc-meta\"> — {bits}</span>" if bits else ""
+        meta = f"<span class=\"sc-meta\"> · {bits}</span>" if bits else ""
         return (f"<div class=\"sourcecard\"><div class=\"sc-head\"><b>{title}</b>{meta}</div>"
                 f"<div class=\"sc-body\">{excerpt}</div></div>")
     if t == "fill_table":

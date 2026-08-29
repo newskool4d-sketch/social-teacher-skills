@@ -78,6 +78,7 @@ CH_GRAY_SMALL, CH_GRAY = 11, 12
 PP_BODY, PP_TITLE, PP_SEC, PP_H3, PP_LIST, PP_CENTER, PP_CELL = 0, 1, 2, 3, 5, 8, 9
 PP_H1 = 10   # h1 전용: 위 구분선(HTML .h1 border-top 대응 — 결함 V8)
 PP_KEEP = 11  # 본문 + 다음 문단과 붙임 — 지시-답란 동반 배치(결함 V4)
+PP_LIST_KEEP = 12  # 번호 라벨("1. ") 문단: 목록 내어쓰기 + 붙임 (결함 F4 × V4 동시 충족)
 # 스타일 id 대응 (한글 [서식-스타일]에서 제목·목록을 일괄 편집할 수 있게 — 결함 F10)
 ST_BODY, ST_TITLE, ST_H1, ST_H2, ST_H3, ST_LIST, ST_CAPTION = 0, 1, 2, 3, 4, 5, 6
 # borderFill id 대응
@@ -243,7 +244,11 @@ def build_header_xml() -> str:
         + _para_pr(PP_H1, prev=800, nxt=150, spacing=170, border_bf=BF_H1_RULE,
                    border_top_off=4, keep=True)
         # 본문 + 다음 문단과 붙임 — group/암묵 그룹의 마지막 전 블록들이 쓴다
-        + _para_pr(PP_KEEP, align="LEFT", spacing=150, nxt=700, keep=True))
+        + _para_pr(PP_KEEP, align="LEFT", spacing=150, nxt=700, keep=True)
+        # 번호 라벨 문단: PP_KEEP과 같되 목록 내어쓰기를 더한다 — "1. "이 왼쪽 여백에
+        # 걸리고 둘째 줄부터 본문이 번호 뒤에 정렬된다(결함 F4).
+        + _para_pr(PP_LIST_KEEP, align="LEFT", indent=-1500, left=1500, spacing=150,
+                   nxt=700, keep=True))
     return (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>\n'
         '<hh:head xmlns:hh="http://www.hancom.co.kr/hwpml/2011/head" '
@@ -262,7 +267,7 @@ def build_header_xml() -> str:
                   'checkable="0"/>' for lv in range(1, 8))
         + '</hh:numbering></hh:numberings>'
         '<hh:bullets itemCnt="0"/>'
-        f'<hh:paraProperties itemCnt="12">{para_prs}</hh:paraProperties>'
+        f'<hh:paraProperties itemCnt="13">{para_prs}</hh:paraProperties>'
         # 스타일 정의(결함 F10): 제목·목록·캡션 문단이 이름 있는 스타일을 참조해
         # 교사가 한글 [서식-스타일]에서 문서 전체를 일괄 편집할 수 있다.
         '<hh:styles itemCnt="7">'
@@ -517,10 +522,15 @@ def emit_instructions(w, blk, theme):
 
 def emit_labeled(w, blk, theme):
     lbl = chrome_ko(label_text(blk))
-    runs = [_run(f"{lbl}{label_sep(lbl)} ", CH_BOLD)]
+    sep = label_sep(lbl)
+    runs = [_run(f"{lbl}{sep} ", CH_BOLD)]
     body = _md_runs(blk.get("text", ""))
     runs += body[0]
-    w.para(runs, est_pt=15.0 * max(1, -(-len(str(blk.get('text', ''))) // CHARS_EST)) + 7)
+    # 번호 라벨("1. ")은 번호 매긴 항목으로 조판된다 — 목록 내어쓰기를 준다(결함 F4).
+    # 글자 라벨("수업 흐름: ")은 문단 머리말이므로 본문 그대로 둔다.
+    para_pr = PP_LIST_KEEP if sep == "." else PP_BODY
+    w.para(runs, para_pr,
+           est_pt=15.0 * max(1, -(-len(str(blk.get('text', ''))) // CHARS_EST)) + 7)
     for extra in body[1:]:
         w.para(extra, est_pt=16.0)
 
