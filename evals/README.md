@@ -86,6 +86,31 @@ science-only, 4-package, single-judge sample with no 고교 lesson in it. `M3` c
 at all (it judges the chat response, and these are archived artifacts), and `R-S2` is skipped for
 초등 by its own conditional. Treat the pass rate as a first reading, not a benchmark.
 
+## 사회과 1차 실채점 (2026-08-30)
+
+`runs/2026-08-30/`은 사회과 루브릭의 첫 실채점이다. 대상은 Task 7 파일럿을 그 실행에서 **새로 렌더한**
+산출물(HWPX 25개 + HTML 쌍둥이 25개)이고, 사전 게이트로 `tests/check_hwpx_quality.py` 25파일 FAIL 0과
+`tests/check_lesson.py` DoD 4/4를 통과한 상태에서 판정했다.
+
+| 루브릭 | 패키지 | 칸 | PASS | FAIL | skip | 채점 칸 통과율 |
+| :---- | ----: | ----: | ----: | ----: | ----: | ----: |
+| ko12-lesson-planning (`shared` 33 + `social` 11) | 4 | 176 | 167 | 0 | 9 | 100.0% |
+| ko12-lesson-differentiation (27 + 2) | 3 | 87 | 69 | 0 | 18 | 100.0% |
+| hwpx-format (V1–V10) | 7 | 70 | 42 | 0 | 28 | 100.0% |
+| **합계** | | **333** | **278** | **0** | **55** | **100.0%** |
+
+**FAIL 0은 처음부터 0이었다는 뜻이 아니다.** 1차 판정에서 `P2` fail 2건(중등 수업안 2종)이 나왔다 —
+선수 학습 콜아웃이 "학습맵에 기록이 없습니다"까지만 말하고 직전 선수 내용의 명명과 "추정" 표시를
+빠뜨렸다. 스킬 자신의 규칙(`curriculum-kr-mcp.md` 사회 절 2단계)이 요구하는 것이었고 초등·차별화
+파일럿 5종은 이미 지키고 있었으므로 산출물 결함으로 판정해 고치고 재렌더·재채점했다(수정 커밋은 분리).
+자세한 처분은 `runs/2026-08-30/summary.md`의 「FAIL 전건과 처분」 절에 있다.
+
+**이 수치가 덮지 못하는 것.** skip 55칸이 곧 측정 공백이다. (1) 대화 행동 — planning `M3` 4칸,
+differentiation `M1`–`M4`·`M-CLARIFY-*` 18칸 — 은 채팅·세션 기록이 없어 판정하지 않았다.
+(2) hwpx-format의 `V4`·`V5`·`V9`·`V10` 28칸은 한글 실행 환경과 PDF 스냅샷이 없어 쪽 나눔·머리행
+반복·편집 내성을 재지 못했다. 과학판 2026-08-08-r5의 68/68과는 **판정 범위가 달라 비교 대상이 아니다.**
+(3) 판정자는 단일 모델 1회전이고 사람 검증이 없다.
+
 ---
 
 ## **Evals contents**
