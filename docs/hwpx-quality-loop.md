@@ -83,7 +83,7 @@ DIFF="$ROOT/plugin/skills/ko12-lesson-differentiation"
 # 4. 재렌더 (render_all.sh가 최소 게이트 G1–G6을 자동 실행)
 cd "$ROOT/pilot/elementary"      && bash "$PLAN/scripts/render_all.sh" lesson.json out
 cd "$ROOT/pilot/middle-school"   && bash "$PLAN/scripts/render_all.sh" lesson.json out
-cd "$ROOT/pilot/urgent-middle-school" && bash "$PLAN/scripts/render_all.sh" lesson.json out
+cd "$ROOT/pilot/high-integrated" && bash "$PLAN/scripts/render_all.sh" lesson.json out
 cd "$ROOT/pilot/elementary"      && bash "$DIFF/scripts/render_all.sh" differentiation.json out-differentiation
 cd "$ROOT/pilot/middle-school"   && bash "$DIFF/scripts/render_all.sh" differentiation.json out-differentiation
 cd "$ROOT" && bash "$PLAN/scripts/render_all.sh" tests/smoke/korean_lesson.json tests/smoke/out/ko
@@ -93,7 +93,7 @@ cd "$ROOT"
 python tests/check_hwpx_quality.py \
   pilot/elementary/out pilot/elementary/out-differentiation \
   pilot/middle-school/out pilot/middle-school/out-differentiation \
-  pilot/urgent-middle-school/out tests/smoke/out/ko
+  pilot/high-integrated/out tests/smoke/out/ko
 python tests/check_lesson.py pilot/elementary/lesson.json pilot/elementary/out
 python tests/check_lesson.py pilot/middle-school/lesson.json pilot/middle-school/out
 python tests/smoke/check_hwpx.py tests/smoke/out/ko

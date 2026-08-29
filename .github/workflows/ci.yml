@@ -1,10 +1,13 @@
 # SPDX-FileCopyrightText: 2026 science-teacher-skills contributors
+# SPDX-FileCopyrightText: 2026 social-teacher-skills contributors
 # SPDX-License-Identifier: Apache-2.0
 #
 # 표준 라이브러리 전용 검사 층만 돌린다 — 렌더 스모크(내장 최소 게이트 G1~G6 포함),
 # 한글 무결성, DoD, HWPX 구조 품질 검사기(S·F·C·P), 렌더러 사본 동일.
 # 렌더본은 저장소에 커밋하지 않는 정책(pilot/*/out*)이므로 CI가 파일럿을 매번 새로
 # 렌더해 검사한다 — 항상 현재 렌더러를 검사하게 된다.
+# 파일럿 4종은 사회과 밴드를 하나씩 맡는다 — 초3–4 / 초5–6 / 중 / 고 통합사회1.
+# 성취기준 원문의 판정 근거는 각 파일럿의 ground-truth.md에 있다.
 # 한컴 COM 실열림·PDF 쪽 채움 실측은 한글이 필요해 CI에 들어올 수 없다 —
 # 그 층은 로컬 품질 루프가 맡는다 (docs/hwpx-quality-loop.md).
 
@@ -46,7 +49,7 @@ jobs:
       # 파일럿 4종을 새로 렌더한 산출물에 건다.
       - name: 파일럿 수업 렌더 + DoD (4종)
         run: |
-          for p in elementary middle-school random-elementary urgent-middle-school; do
+          for p in elementary middle-school random-elementary high-integrated; do
             bash plugin/skills/ko12-lesson-planning/scripts/render_all.sh \
               "pilot/$p/lesson.json" "/tmp/out-$p"
             python tests/check_lesson.py "pilot/$p/lesson.json" "/tmp/out-$p"
@@ -63,5 +66,5 @@ jobs:
         run: |
           python tests/check_hwpx_quality.py /tmp/ci-smoke \
             /tmp/out-elementary /tmp/out-middle-school \
-            /tmp/out-random-elementary /tmp/out-urgent-middle-school \
+            /tmp/out-random-elementary /tmp/out-high-integrated \
             /tmp/diff-elementary /tmp/diff-middle-school /tmp/diff-random-elementary
