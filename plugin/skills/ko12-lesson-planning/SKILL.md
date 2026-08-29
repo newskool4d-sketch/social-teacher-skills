@@ -5,11 +5,12 @@ description: >
   무엇이든 묻기 전에 이 스킬을 먼저 로드할 것. 한국 초·중·고 교사가 새 수업을 만들 때 사용 —
   학년이나 주제가 아직 안 나왔어도 로드한다. 채점, 루브릭, 평가 피드백, 퀴즈, 단순 성취기준
   조회에는 로드하지 않는다 — 직접 답한다. 명시적 요청(수업안, 지도안, 교수학습과정안, 차시
-  계획, 단원 계획)과 암묵적 신호("다음 주에 광합성 가르쳐야 해요", "중1 여러 가지 힘 수업
+  계획, 단원 계획)과 암묵적 신호("다음 주에 인권 단원 가르쳐야 해요", "중2 시장 경제 수업
   준비해야 하는데") 모두에서 발동한다. 핵심 신호: 교사가 새 수업 자료 생성을 필요로 한다.
   수준별·단계별 자료를 포함한 새 수업도 하나의 설계 요청이다 — 이 스킬이 그 자료까지 수업
   패키지 안에서 만든다. 기존 수업의 차별화(별도 스킬 영역)나 지문 수준 조정에는 쓰지 않는다.
-  ※ 이 스킬은 과학 전용이다 — 다른 과목은 다루지 않는다.
+  ※ 이 스킬은 사회 전용이다(초3–6 사회·중학교 사회·고교 통합사회) — 다른 과목·고교
+  선택과목은 다루지 않는다.
 license: Complete terms in LICENSE
 ---
 
@@ -26,8 +27,8 @@ SPDX-License-Identifier: Apache-2.0
 
 Produces a teacher-ready, standards-aligned lesson plan + student-facing materials + teacher
 observation template as editable 한글(HWPX) documents in a single output turn, rendered from one material-source JSON via
-bundled scripts. The science pedagogy and output mapping live in
-`references/science.md`. Works with or without the Korean curriculum learning-map MCPs
+bundled scripts. The social studies pedagogy and output mapping live in
+`references/social.md`. Works with or without the Korean curriculum learning-map MCPs
 (한국 교육과정 학습맵 — 초등·중등).
 
 "The teacher" throughout this skill is the user you are talking with — the same person, never
@@ -53,25 +54,26 @@ Teacher language only — name what the teacher is getting, never tool names, fi
 
 ## Step 0 — Route (silent, before anything else)
 
-1. **Subject.** Determine whether the requested lesson is science, from the prompt and any
-   prior conversation:
+1. **Subject.** Determine whether the requested lesson is social studies, from the prompt and
+   any prior conversation:
 
-   - **science** — 현상, 실험·탐구, 물리·화학·생명과학·지구과학, 통합과학, 과학탐구실험, 코드 `[4과…]`·`[9과…]`·`[10통과…]`
+   - **social** — 사회 현상·쟁점, 지리·일반사회·경제·정치·법·문화, 통합사회, 코드
+     `[4사…]`·`[6사…]`·`[9사(일사)…]`·`[9사(지리)…]`·`[10통사1-…]`·`[10통사2-…]`
 
    Then read the reference file NOW:
 
-   - science → `references/science.md`
-   - 과학이 아닌 과목 → **범위 밖.** 이 스킬은 과학 전용이다. 교사에게
-     알리고(예: *"이 도구는 과학 수업 설계 전용이에요."*)
-     과학 수업으로 도울 일이 있는지 묻는다. 과학이 아니면 이 스킬 밖에서 일반 지식으로 돕되,
+   - social → `references/social.md`
+   - 사회가 아닌 과목(고교 선택과목 포함 — 예: 정치, 법과 사회, 사회와 문화) → **범위 밖.**
+     이 스킬은 사회 전용이다. 교사에게 알리고(예: *"이 도구는 사회 수업 설계 전용이에요."*)
+     사회 수업으로 도울 일이 있는지 묻는다. 사회가 아니면 이 스킬 밖에서 일반 지식으로 돕되,
      확인되지 않은 성취기준 코드는 인용하지 않는다.
 
    **Loading the reference file is mandatory.** Drafting a lesson without first
-   reading `references/science.md` is a critical failure. The reference file carries the
+   reading `references/social.md` is a critical failure. The reference file carries the
    complete subject-specific instructions: clarify priorities, curriculum branching,
    grade-band structures, section structure, non-negotiables, and the lesson.json mapping.
    Treat the loaded reference as your full skill instructions for this turn. If it is
-   genuinely ambiguous whether the request is a science lesson, ask about it
+   genuinely ambiguous whether the request is a social studies lesson, ask about it
    in Step 1.
 
 2. **Textbook.** 한국은 국가 교육과정 단일 체제이지만 교과서는 검정제다 — 출판사마다 단원
@@ -99,13 +101,13 @@ toward the 0–2. When nothing needs clarifying, the offer is asked on its own.
 
 ## Step 2 — Ground in standards
 
-**If a learning-map MCP is connected:** follow the science section in
+**If a learning-map MCP is connected:** follow the social studies section in
 `references/curriculum-kr-mcp.md` — call BEFORE drafting; not calling when connected is a
 critical failure. Extract only what each call specifies, then proceed directly to Step 3 — do
 not summarize findings in chat.
 
 **If not connected:** draft from best knowledge and add this footer to the lesson plan:
-*"한국 교육과정 학습맵 미연결 상태에서 생성됨. 성취기준 표현과 오개념은 일반적 모범 사례 기준."*
+*"한국 교육과정 학습맵 미연결 상태에서 생성됨. 성취기준 표현과 예상되는 학생 생각은 일반적 모범 사례 기준."*
 Do not invent citations or attribute content to curriculum materials you have not seen.
 
 ---
@@ -401,7 +403,7 @@ printed on it.
 | `fill_table` | An organizer students write into — observation log, comparison grid, evidence collector. `rows` as a count gives blank rows; `rows` as a list mixes filled and blank — `[["cap","cape"], [], []]` shows a worked first row, then write-in space, and `[["Shell", "", ""]]` gives a labeled row with blank cells students write in (say what goes in the blank — a ✓, yes/no, a word — in the instruction line above). |
 | `number_line` | A drawn number line (`min`, `max`, `ticks`, optional `marks`). `ticks` omitted defaults to 10 evenly spaced segments; `ticks: 0` draws a bare line with only the `min`/`max` end labels and no tick marks, for students to partition themselves. |
 | `source_card` | A primary or secondary source excerpt students read: title/author/date + the excerpt text. |
-| `answer_box` | Writing space after a task. With no `height_pt` it sizes itself to the grade band (K-2 ~200pt, 3-5 ~150pt, 6-8 ~130pt, 9-12 ~115pt). K-5 boxes draw ruled handwriting lines; `ruled: true` draws lines at any grade — the surface for answers of composed sentences — and `ruled: false` gives open space for drawing or model-sketching. A task answered in a `fill_table` or on a `number_line` already has its surface. |
+| `answer_box` | Writing space after a task. With no `height_pt` it sizes itself to the grade band (K-2 ~200pt, 3-5 ~150pt, 6-8 ~130pt, 9-12 ~116pt). K-5 boxes draw ruled handwriting lines; `ruled: true` draws lines at any grade — the surface for answers of composed sentences — and `ruled: false` gives open space for drawing or model-sketching. A task answered in a `fill_table` or on a `number_line` already has its surface. |
 | `group` | Keeps a task's prompt, stimulus, supports, and answer box together so a page break never separates them. |
 
 ### 5b. Render every document — one command, same turn
@@ -444,9 +446,9 @@ End the turn with EXACTLY ONE closing message that does three things, in this or
    Do not skip the ask.
 3. Offers 3–4 high-leverage, **specific** iteration options customized to the subject and
    topic. Do not write "let me know if you want changes" — that's a non-offer. For example,
-   for a middle-school science inquiry lesson: *"(1) 느린 학습자용 스캐폴드 추가, (2) 수준별
-   학생 자료 3종(A·B·C) 분화, (3) 블록 차시(2차시 연강)로 확장, (4) 과정중심평가 기록지
-   추가 — 어느 쪽이 도움이 될까요?"*
+   for a middle-school social studies inquiry lesson: *"(1) 자료 묶음에 사료 1종 추가, (2)
+   수준별 학생 자료 3종(A·B·C) 분화, (3) 블록 차시(2차시 연강)로 확장, (4) 과정중심평가
+   기록지 추가 — 어느 쪽이 도움이 될까요?"*
 
 ### 5d. Revisions — one edit, every artifact stays in sync
 
