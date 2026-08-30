@@ -6,11 +6,13 @@ description: >
   학년이나 주제가 아직 안 나왔어도 로드한다. 채점, 루브릭, 평가 피드백, 퀴즈, 단순 성취기준
   조회에는 로드하지 않는다 — 직접 답한다. 명시적 요청(수업안, 지도안, 교수학습과정안, 차시
   계획, 단원 계획)과 암묵적 신호("다음 주에 인권 단원 가르쳐야 해요", "중2 시장 경제 수업
-  준비해야 하는데") 모두에서 발동한다. 핵심 신호: 교사가 새 수업 자료 생성을 필요로 한다.
-  수준별·단계별 자료를 포함한 새 수업도 하나의 설계 요청이다 — 이 스킬이 그 자료까지 수업
-  패키지 안에서 만든다. 기존 수업의 차별화(별도 스킬 영역)나 지문 수준 조정에는 쓰지 않는다.
-  ※ 이 스킬은 사회 전용이다(초3–6 사회·중학교 사회·고교 통합사회) — 다른 과목·고교
-  선택과목은 다루지 않는다.
+  준비해야 하는데", "다음 주에 근현대 단원 들어가요") 모두에서 발동한다. 핵심 신호: 교사가
+  새 수업 자료 생성을 필요로 한다. 수준별·단계별 자료를 포함한 새 수업도 하나의 설계
+  요청이다 — 이 스킬이 그 자료까지 수업 패키지 안에서 만든다. 기존 수업의 차별화(별도 스킬
+  영역)나 지문 수준 조정에는 쓰지 않는다.
+  ※ 이 스킬은 사회·역사 전용이다(초3–6 사회·중학교 사회·중학교 역사·고교 통합사회·한국사1·2·사회
+  선택과목) — 도덕과(윤리 계열)·역사 선택과목(세계사·동아시아 계열)·초1–2는 다루지
+  않는다.
 license: Complete terms in LICENSE
 ---
 
@@ -55,27 +57,35 @@ Teacher language only — name what the teacher is getting, never tool names, fi
 
 ## Step 0 — Route (silent, before anything else)
 
-1. **Subject.** Determine whether the requested lesson is social studies, from the prompt and
-   any prior conversation:
+1. **Subject.** Determine whether the requested lesson is social studies or history, from the
+   prompt and any prior conversation:
 
-   - **social** — 사회 현상·쟁점, 지리·일반사회·경제·정치·법·문화, 통합사회, 코드
-     `[4사…]`·`[6사…]`·`[9사(일사)…]`·`[9사(지리)…]`·`[10통사1-…]`·`[10통사2-…]`
+   - **social** — 사회 현상·쟁점, 지리·일반사회·경제·정치·법·문화, 통합사회, 사회 선택과목,
+     코드 `[4사…]`·`[6사…]`·`[9사(일사)…]`·`[9사(지리)…]`·`[10통사1-…]`·`[10통사2-…]`, 선택과목
+     12종 `[12경제…]`·`[12국관…]`·`[12금융…]`·`[12법사…]`·`[12사탐…]`·`[12사문…]`·`[12정치…]`·
+     `[12기지…]`·`[12도탐…]`·`[12세지…]`·`[12여지…]`·`[12한탐…]`(survey-v2 §6)
+   - **history** — 사료·시대·인물·사건·왕조 등 역사적 탐구, 중학교 역사·한국사1·한국사2, 코드
+     `[9역…]`·`[10한사1-…]`·`[10한사2-…]`(survey-v2 §6)
 
    Then read the reference file NOW:
 
    - social → `references/social.md`
-   - 사회가 아닌 과목(고교 선택과목 포함 — 예: 정치, 법과 사회, 사회와 문화) → **범위 밖.**
-     이 스킬은 사회 전용이다. 교사에게 알리고(예: *"이 도구는 사회 수업 설계 전용이에요."*)
-     사회 수업으로 도울 일이 있는지 묻는다. 사회가 아니면 이 스킬 밖에서 일반 지식으로 돕되,
-     확인되지 않은 성취기준 코드는 인용하지 않는다.
+   - history → `references/history.md`
+   - 사회·역사가 아니면(도덕과·윤리 계열 — 예: 현대사회와 윤리 `[12현윤…]`; 고등학교 역사
+     선택과목 — 세계사 `[12세사…]`, 동아시아 역사 기행 `[12동역…]`, 역사로 탐구하는 현대 세계
+     `[12역현…]`; 그리고 초1–2 포함) → **범위 밖.** 이 스킬은 사회·역사 전용이다. 교사에게
+     알리고(예: *"이 도구는 사회·역사 수업 설계 전용이에요."*) 사회나 역사 수업으로 도울 일이
+     있는지 묻는다. 사회·역사가 아니면 이 스킬 밖에서 일반 지식으로 돕되, 확인되지 않은
+     성취기준 코드는 인용하지 않는다.
 
-   **Loading the reference file is mandatory.** Drafting a lesson without first
-   reading `references/social.md` is a critical failure. The reference file carries the
-   complete subject-specific instructions: clarify priorities, curriculum branching,
-   grade-band structures, section structure, non-negotiables, and the lesson.json mapping.
-   Treat the loaded reference as your full skill instructions for this turn. If it is
-   genuinely ambiguous whether the request is a social studies lesson, ask about it
-   in Step 1.
+   **Loading the reference file is mandatory.** Drafting a lesson without first reading the
+   assigned reference file (`references/social.md` for social studies, `references/history.md`
+   for history) is a critical failure. The reference file carries the complete
+   subject-specific instructions: clarify priorities, curriculum branching, grade-band
+   structures, section structure, non-negotiables, and the lesson.json mapping. Treat the
+   loaded reference as your full skill instructions for this turn. If it is genuinely
+   ambiguous whether the request is a social studies or history lesson, ask about it in
+   Step 1.
 
 2. **Textbook.** 한국은 국가 교육과정 단일 체제이지만 교과서는 검정제다 — 출판사마다 단원
    전개가 다르다. 교사가 출판사·교과서를 언급해도 그 교과서의 활동·지문·삽화·문항을 재현하지
@@ -103,9 +113,10 @@ toward the 0–2. When nothing needs clarifying, the offer is asked on its own.
 ## Step 2 — Ground in standards
 
 **If a learning-map MCP is connected:** follow the social studies section in
-`references/curriculum-kr-mcp.md` — call BEFORE drafting; not calling when connected is a
-critical failure. Extract only what each call specifies, then proceed directly to Step 3 — do
-not summarize findings in chat.
+`references/curriculum-kr-mcp.md`, or the history section in `references/history.md` for a
+history lesson — call BEFORE drafting; not calling when connected is a critical failure.
+Extract only what each call specifies, then proceed directly to Step 3 — do not summarize
+findings in chat.
 
 **If not connected:** draft from best knowledge and add this footer to the lesson plan:
 *"한국 교육과정 학습맵 미연결 상태에서 생성됨. 성취기준 표현과 예상되는 학생 생각은 일반적 모범 사례 기준."*
