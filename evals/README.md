@@ -71,6 +71,58 @@ Three shared criteria moved their bar rather than their wording, and each one mo
 
 `docs/evals-port-review.html` and `docs/evals-unchanged-criteria.md` document the 2026-08-03 upstream→Korean stage only; they are kept as the science-stage lineage record and do not cover this second stage.
 
+## 역사·선택과목 이식 (2026-08-30) — 3단계: 사회 → 역사 + 고교 선택과목
+
+v0.2.0이 스킬에 역사 계열(중학교 역사·한국사1·2)과 고교 선택과목 분기를 더했으므로, 그에 맞춰
+과목 루브릭이 하나 늘었다: **`history.csv` 15항목 신설**(역사 패키지는 `shared` + `history`로 채점하고
+`social.csv`는 적용하지 않는다), `social.csv`에 **선택과목 조건부 2항목 증분**(기존 11항목 무수정),
+그리고 `shared.csv`·`differentiation.csv`에 **역사 범위로 스코프된 최소 수정**. 세 갈래 모두 채점을
+시작하기 전에 끝냈다.
+
+`history.csv`의 15항목은 두 갈래에서만 왔다 — 컨트롤러가 지정한 7항목(`P-H1`–`P-H7`), 그리고
+**`social.csv`에 대응 항목이 있는데 역사 패키지에서는 그것이 적용되지 않아 측정 공백이 될 자리**
+8항목이다. 뒤쪽 갈래가 없으면 역사 패키지는 사회 패키지보다 얇은 루브릭으로 채점되고 그만큼 통과율의
+뜻이 줄어든다. 모든 항목의 부정 예시(✗)는 `history.md`의 축자 표현이다.
+
+| history.csv | 기준 | 계보 | 출처 절 (`references/history.md`) |
+| :---- | :---- | :---- | :---- |
+| `P-H1` | 사료 실재성·귀속·수록 lane(닫힌 4갈래, 현대 신문 발췌 0) | `social.csv` `P-C3`의 역사판 | §사료(source) 규칙 |
+| `P-H2` | 출처 확인 발문(누가·언제·왜)이 학생 지면에·내용 파악에 선행 | 역사 고유 (대응 없음) | 중 §사료 읽기, 중 협상 불가 3, 고 §사료 읽기 |
+| `P-H3` | 사실 진술과 해석·평가 진술의 서술 형태 구분 | 역사 고유 (대응 없음) | §역사 서술 가드레일 ① |
+| `P-H4` | 시대착오를 정답 자리에 놓지 않음 | 역사 고유 (대응 없음) | 가드레일 ②, 고 협상 불가 |
+| `P-H5` | 복수 해석 병기 4요소 (조건부: 근현대 5영역) | 역사 고유 (대응 없음) | 가드레일 ③, 고 협상 불가 |
+| `P-H6` | "(확인 필요)" 표기가 그 자리에 · 학생 지면 미확인 서술 0 | 역사 고유 (대응 없음) | 가드레일 ④, §매핑 `timeline` |
+| `P-H7` | 성취기준 유형 선언과 구조의 정합(3유형) | `P-C7`의 역사판 | §성취기준 유형에 따른 단계 분기 |
+| `P-H8` | 3범주 분리 + 과정·기능 동사가 역사 목록 | `P-C1`의 역사판 | §섹션 구조 2 |
+| `P-H9` | 단원·차시 탐구 질문 쌍, 차시 질문의 4조건 | `P-C2`의 역사판 | §단원 탐구 질문 |
+| `P-H10` | 학생 과제가 이번 차시 사료의 근거를 지목하게 함 | `P-C4`의 역사판 | 중 협상 불가 1, §정리 문항 지침 |
+| `P-H11` | 논쟁 가드레일 4점검(정답화·정당 명명·가치 문항·모델 입장) | `P-C5`의 역사판 | 가드레일 ③의 상속 절 |
+| `P-H12` | 가치·태도의 관찰 가능성 | `P-C8`의 역사판 | §섹션 구조 2·6 |
+| `P-H13` | 사료 분석이 결론 제시에 선행 | `P-C9`의 역사판 | 중·고 §시대 질문 만나기 |
+| `R-H1` | 과목별 논증 형식(중 사료 근거 2 / 고 다른 해석 고려) | `R-C1`의 역사판 | 중·고 §해석 구성·정리 문항 |
+| `R-H2` | 사료 2종의 긴장·짝 근거·이름 일관 (조건부: 사료2종) | `R-C2`의 역사판 | 중 협상 불가 2, §사료 규칙 |
+
+`social.csv`의 증분 2항목은 둘 다 **조건부**라서 선택과목이 아닌 패키지에서는 skip으로 걸러진다 —
+기존 판정을 무효화할 수 없는 형태다.
+
+| social.csv | 기준 | Conditional | 출처 절 (`references/social.md`) |
+| :---- | :---- | :---- | :---- |
+| `R-C3` | 경제 계열의 정량 근거 필수(수치 + 그 수치가 무엇을 재는지) | 선택과목(경제 계열) | §고교 선택과목 과목군별 표 |
+| `O-C1` | 선택과목 과목명이 subject·eyebrow에 실측 표기 그대로 | 선택과목 | §고교 선택과목 "과목명·표기" |
+
+`shared.csv`(`P2`·`P4b`·`R3`·`O3b`·`M5`·`O15`)와 `differentiation.csv`(`P2`·`P6`·`R2`·`O10`)의 수정은
+전부 **역사 계열에 한정한 절을 덧댄 것**이고, 사회과 문면은 한 글자도 지우지 않았다. 세 종류다:
+(1) 사회 어휘가 역사 산출물에 그대로 읽히면 오독이 되는 자리(자료→사료, 자료 묶음→사료 묶음,
+정리 문항 분류 기준), (2) 사회과 실측 수치 옆에 역사 실측 수치를 나란히 놓는 자리(`P2`의 선수 edge
+건수), (3) 사회과 pass 절이 역사 가드레일이 금지한 것을 허용하게 되는 자리(`M5` — 사회는 교사가
+밝힌 출판사를 위치 감각으로 쓸 수 있지만 역사는 가드레일 ⑤로 그것을 금지한다). 각 수정의 근거 절은
+해당 `Notes`에 `2026-08-30-v02 추가`로 적혀 있다.
+
+차별화 `R2`·`O10`의 역사 절은 그중에서도 **측정 공백을 메운 것**이다. `[9역13-03]` 같은 근현대 차시는
+가드레일 ③을 **세 수준 모두**에 요구하고 학습지 3종에서 "(확인 필요)" 서술을 금지하는데,
+`differentiation.csv`는 그 어느 쪽도 재지 않았고 `history.csv`는 차별화 패키지에 적용되지 않는다.
+그대로 두면 통과율이 재지 않은 규칙 위에 서게 되므로 두 행에 역사 절을 덧댔다.
+
 ## First run (2026-08-06) — 과학판 기록
 
 이 절은 1단계(과학) 실채점의 보존 기록이다. 대상 패키지·루브릭이 모두 과학판이므로 사회과
@@ -130,7 +182,7 @@ differentiation `M1`·`M3`·`M4` 9칸, `M-CLARIFY-*` 6칸 — 은 채팅·세션
 ## **Evals contents**
 | Rubric | Description |
 | :---- | :---- |
-| ko12-lesson-planning/rubrics/ | Rubrics for scoring lesson-plan outputs: `shared.csv` (33 core criteria) plus the subject-specific `social.csv` (11). This port keeps only the 사회 rubric; the upstream repository also ships rubrics for its other subjects. |
+| ko12-lesson-planning/rubrics/ | Rubrics for scoring lesson-plan outputs: `shared.csv` (33 core criteria) plus one subject rubric — `social.csv` (13: 11 + 선택과목 조건부 2) for 사회 계열, `history.csv` (15) for 역사 계열. 한 패키지에는 `shared` + 과목 루브릭 하나가 걸린다. This port keeps only the 사회·역사 rubrics; the upstream repository also ships rubrics for its other subjects. |
 | ko12-lesson-differentiation/rubrics/ | Rubrics for scoring differentiation outputs: `differentiation.csv` (27 tiered-differentiation criteria) and `clarifying_question.csv` (2 scorers for model clarification behavior) |
 | hwpx-format/rubrics/ | `format.csv` — V1–V10, the visual-quality layer judged on the rendered 한글 documents after the automated checker reports zero fails |
 | live-conversation/rubrics/ | `live.csv` — L1–L7, the conversational-behaviour layer. 시나리오가 과학 전제여서 사회판에서는 아직 실측 전이다 (see that directory's README) |
