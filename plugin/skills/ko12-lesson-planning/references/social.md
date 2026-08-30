@@ -309,7 +309,7 @@ SKILL.md Step 5(산출)에 도달하면 사회 내용을 material-source JSON에
 - `shared.vocabulary`, `shared.misconceptions`, `shared.look_fors`는 SKILL.md 스키마대로.
 
 **산출 문서.** 사회과 탐구 수업은 항상 글로 쓰는 분석 발문을 가지므로 `lesson_plan`·`observation_template`과 함께
-**`id: "student_materials"`를 항상 포함한다.** 자료를 수록한 경우 `id: "source_packet"`도 낸다 (자료마다 `from_shared`
+**`id: "student_materials"`를 항상 포함한다.** 수록 자료가 2종 이상인 경우 `id: "source_packet"`도 낸다 (자료마다 `from_shared`
 하나 + "학습지와 함께 읽으세요" 한 줄). **자료를 별도 묶음으로 뽑은 경우** 학생 학습지는 *"자료 가와 자료
 나는 자료 묶음에 있습니다."*로 시작하고, 자료 카드 자체는 학습지에 다시 싣지 않는다.
 
@@ -318,7 +318,10 @@ SKILL.md Step 5(산출)에 도달하면 사회 내용을 material-source JSON에
 ```
 sections:
   "오늘의 질문"      callout(student-task) from_shared:supporting_question
-  "자료"            from_shared:source_a ; from_shared:source_b   (source_packet을 내지 않을 때만)
+  "먼저 내 생각 쓰기"  group[ from_shared:anchor_task, answer_box ]   (중·고 정리 문항이 이 초기 입장을 다시 부른다 —
+                    anchor_task.student가 null인 초 밴드 구술 도입은 이 행이 비어 렌더되지 않는다)
+  "자료"            from_shared:source_a 또는 source_b (실제 카드가 있는 쪽 하나만 — 수록 자료가 1종일 때만,
+                    source_packet 미출력)
   "자료 살펴보기"     발문 k마다:
                       group[ {type: from_shared, key: qk, label: "k"},
                              answer_box ]

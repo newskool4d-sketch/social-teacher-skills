@@ -320,7 +320,7 @@ appears on more than one page under a key you choose: a problem as `p1`, a sourc
 `stamp_act_petition`, a data set as `prices_table`. A key's
 value can be a string, a single block, a list of blocks, or a faceted object
 `{teacher: …, student: …, stimulus: [blocks]}`. On a **student** page, only the `student`
-facet (after any `stimulus` blocks) renders — a `student` of `null` means nothing prints
+facet (its `stimulus` blocks printed after it) renders — a `student` of `null` means nothing prints
 there, which is how oral or teacher-led tasks stay off the worksheet. On a **teacher** page,
 both facets render: the teacher facet as plain script, then the student facet as one
 "Students see" line, so the teacher reads their own script and the exact prompt
