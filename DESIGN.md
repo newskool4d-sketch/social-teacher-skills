@@ -89,7 +89,7 @@ plugin/
 | # | 원본 | 이식 | 방식 | 단계 |
 |---|---|---|---|---|
 | A | Learning Commons KG | 학습맵 MCP 2종 (초등/중등) | `learning-commons-kg.md` → `curriculum-kr-mcp.md` 파일 치환 | 1 |
-| B | 미국 과학 pedagogy 레퍼런스 (science.md) | 2022 개정 체제 과학 레퍼런스 | 치환 규칙 적용해 재작성 | 1 |
+| B | 미국 과학 pedagogy 레퍼런스 | 2022 개정 체제 레퍼런스 — 현재 `social.md`(사회). 1단계 산출물은 `science.md`(과학)였고, ADR-7에서 사회과로 전면 대체했다 | 치환 규칙 적용해 재작성 | 1 → ADR-7 |
 | C | docx 렌더링 | HWPX 교사 전달 (OWPML 직접 생성) + HTML 작업 파일 | 어댑터 추가(2단계) 후 docx 산출 제거(3단계, 2026-08-03) | 2–3 |
 
 ```
@@ -97,7 +97,7 @@ plugin/
                     │
    Step 2 ──────────┼─ curriculum-kr-mcp.md ── curriculum-kr-secondary (MCP)
                     │                       └─ curriculum-kr-elementary (MCP)
-   Step 3 ──────────┼─ science.md
+   Step 3 ──────────┼─ social.md (science.md 대체, ADR-7)
                     │
    Step 5 ──────────┴─ scripts/ ── render_all.sh ── render_documents.py (HTML)
                                               └── render_lesson_hwpx.py (OWPML 직접 생성)
@@ -207,8 +207,9 @@ plugin/
   2. **논쟁 문제 수업 가드레일 신설** — 정답화 금지·실재 정당/정치인 명명 금지·가치
      문항의 "근거를 들어 자신의 입장을" 형식·모델의 입장 표명 금지 4항. 근거는 교육
      기본법 제6조(교육의 중립성). 과학판에는 없던 요구다.
-  3. **범위 확장** — 과학판이 "고교 미검증"으로 남겼던 공백을 고1 **통합사회1·2**
-     파일럿(`pilot/high-integrated`)으로 해소했다(spec S-10).
+  3. **범위 확장** — 과학판이 "고교 미검증"으로 남겼던 공백을 고1 **통합사회1**
+     파일럿(`pilot/high-integrated`, `[10통사1-02-01]`)으로 해소했다(spec S-10) —
+     통합사회2는 §1.3 범위·라우팅 지원만 하며, 파일럿으로 검증하지 않았다.
 - **근거**: C3 탐구 아크(compelling/supporting question)는 2022 개정 사회과 탐구 흐름
   (단원 탐구 질문 → 차시 탐구 질문 → 자료 기반 근거 → 논증)과 구조가 동형이라, ADR-6의
   "레퍼런스는 재작성, 오케스트레이터는 diff" 원칙을 그대로 적용할 수 있었다.
