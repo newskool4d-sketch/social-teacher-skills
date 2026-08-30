@@ -176,9 +176,9 @@ You will receive:
 
 Grading rules:
   - Judge criteria in the `M` (Model Scaffolding) bucket against the chat
-    response. Judge all other criteria against the attached documents — the
-    content must actually be present in the documents, not merely claimed in
-    the chat response.
+    response (M2는 문서 판정 예외). Judge all other criteria against the attached
+    documents — the content must actually be present in the documents, not
+    merely claimed in the chat response.
   - Pass means the criterion is clearly and fully met. Fail means it is absent,
     incomplete, or only partially met.
 
