@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "social-teacher-skills",
-      "description": "한국 2022 개정 교육과정 기반 사회 수업 설계·수준별 차별화 스킬. 과학판(science-teacher-skills)의 사회과 이식 — 초3–6 사회·중학교 사회·고교 통합사회 전용. 성취기준·선수관계·세부 주제는 한국 교육과정 학습맵 MCP(초등·중등)에서 가져온다.",
+      "description": "한국 2022 개정 교육과정 기반 사회 수업 설계·수준별 차별화 스킬. 과학판(science-teacher-skills)의 사회과 이식 — 초3–6 사회·중학교 사회·중학교 역사·고교 통합사회·한국사1·2·사회 선택과목 전용. 성취기준·선수관계·세부 주제는 한국 교육과정 학습맵 MCP(초등·중등)에서 가져온다.",
       "author": {
         "name": "social-teacher-skills contributors"
       },

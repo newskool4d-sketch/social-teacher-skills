@@ -1,10 +1,11 @@
 # social-teacher-skills — 기초 설계 문서 (DESIGN.md)
 
-**버전**: 0.5 (사회과 이식 — 2026-08-30)
+**버전**: 0.6 (역사·선택과목 확장 — 2026-08-30)
 **상태**: 이 문서가 프로젝트의 canonical 기준이다. 구현 파일(레퍼런스·스펙·스크립트)과
 이 문서가 충돌하면 이 문서를 고치거나 구현을 고친다 — 둘이 어긋난 채 두지 않는다.
 ADR-1~6은 과학판(`science-teacher-skills` v0.3.0-preview.1) 시절의 계보 기록으로
-무수정 유지한다 — 사회과 이식에서 새로 필요했던 결정은 ADR-7 하나다.
+무수정 유지하고, ADR-7은 사회과 이식(2026-08-30) 결정이다 — 역사·선택과목 확장에서
+새로 필요했던 결정은 ADR-8 하나다.
 
 ---
 
@@ -31,21 +32,22 @@ v0.3.0-preview.1을 **사회과로 전면 대체**한 오픈소스 Claude 플러
 
 - `ko12-lesson-planning` 스킬 · `ko12-lesson-differentiation` 스킬 (스킬명은 과목 중립
   이라 과학판에서 무수정 이월, ADR-7)
-- 과목: 사회 단일 — 초3–6 사회, 중학교 사회(일반사회·지리 통합), 고교 **통합사회1·2**
-  (공통과목)
-- 학교급: 초3–6 / 중1–3 / 고1 통합사회까지 (초1–2는 사회 교과가 없어 특례 처리, ADR-2
+- 과목: 사회·역사 — 초3–6 사회, 중학교 사회(일반사회·지리 통합), 중학교 **역사**,
+  고교 **통합사회1·2**(공통과목)·**한국사1·2**(공통과목)·**사회 선택과목 12종**
+  (경제·정치와 법·사회와 문화·세계시민과 지리 등, ADR-8)
+- 학교급: 초3–6 / 중1–3 / 고1–3 (초1–2는 사회 교과가 없어 특례 처리, ADR-2
   계승 — science.md가 소유하던 Clarify 절 로직을 social.md가 이어받음)
-- 학교급 내 제외: 중·고 역사·한국사(별도 과목 체계), 고교 일반·진로선택(정치와 법,
-  사회와 문화, 세계시민과 지리 등) — §3 사회과 고유 요구사항은 spec 참조
-- MCP 번들: 한국 학습맵 2종 (과학판과 동일 — 사회과 성취기준이 이미 두 학습맵에
+- 학교급 내 제외: 도덕과(윤리 계열), 역사 선택과목(세계사·동아시아 계열, ADR-8) —
+  §3 사회과 고유 요구사항은 spec 참조
+- MCP 번들: 한국 학습맵 2종 (과학판과 동일 — 사회·역사 성취기준이 이미 두 학습맵에
   수록되어 있어 신규 MCP가 필요 없다)
 
 ### 1.4 범위에서 제외 (명시적 non-goals)
 
-- 사회 외 과목 — 사회 전용으로 범위 확정 (spec S-1, 2026-08-29). 과학판
-  (`science-teacher-skills`)은 별도 upstream 저장소로 계속 존재하며, 과학+사회 동거
-  구조는 만들지 않는다(ADR-7).
-- 역사·한국사, 고교 일반/진로선택 과목 — §1.3 참조
+- 사회·역사 외 과목 — 사회·역사 전용으로 범위 확정 (spec S-1, 2026-08-29 ·
+  ADR-8, 2026-08-30). 과학판(`science-teacher-skills`)은 별도 upstream
+  저장소로 계속 존재하며, 과학+사회 동거 구조는 만들지 않는다(ADR-7).
+- 도덕과(윤리 계열)·역사 선택과목(세계사·동아시아 계열) — §1.3 참조 (ADR-8)
 - 특성화고 전문교과·특목고 계열 (학습맵 데이터 자체가 없음)
 - 검정 교과서 콘텐츠 재현 (저작권 + 출판사 중립 원칙, §5.4)
 - 평가(채점·루브릭·생기부) **스킬** — 원본에도 없고, 별도 프로젝트 영역.
@@ -230,6 +232,39 @@ plugin/
 - **상세**: [사회과 이식 명세](docs/superpowers/plans/2026-08-29-social-port-spec.md)
   (S-1~S-10, §4 변경 대상 전수, §5 완료 기준).
 
+### ADR-8. 역사·선택과목 확장 — 같은 플러그인 내 2-way 라우팅, 렌더러 무수정 (2026-08-30)
+
+- **결정**: 사회과 단일 판별(ADR-7)을 **social | history 2-way + 범위 밖** 판별로
+  확대하고, `references/history.md`(두 스킬 사본)를 신설해 역사 계열(중학교 역사·
+  고교 한국사1·2)을 받는다. 고교 사회 선택과목(12종)은 신규 파일이 아니라
+  `social.md` 고 밴드의 "선택과목 분기" 절 증분으로 흡수한다 — 통합사회 구조를
+  그대로 재사용하고 영역별 조정 delta(경제=통계·모형 해석 / 정치·법과 사회=쟁점·
+  판례·법령 / 사회와 문화=연구 방법 / 지리=공간 자료)만 얹는다. ADR-1(3범주)·
+  ADR-2(학년군)·ADR-3(학습맵 2종 병렬)·ADR-4(렌더링)·ADR-6(SKILL.md diff 원칙)은
+  전부 무수정 이월한다 — 이 결정들은 과목에 의존하지 않는다.
+- **역사 고유 신설 3가지**(E-3·E-7·E-10): ① 사료 탐구 아크 — 시대 질문 → 사료
+  읽기(출처 확인: 누가·언제·왜) → 교차 검증·맥락화 → 해석 구성(주장-근거-사료) →
+  정리 문항, 사실/해석 구분·시대착오 금지·사료 없는 단정 금지·복수 해석 병기가
+  협상 불가 항목이다. ② 루브릭 `history.csv` 신설(P-H 15항목) — 역사 패키지는
+  `shared`+`history`로 채점하고 `social.csv`는 적용하지 않는다. ③ 역사 서술
+  가드레일 — 연도·사건·인물은 학습맵·실측 우선, 훈련 지식 단독 서술이면 "확인
+  필요" 표기, 근현대사 쟁점은 복수 해석 병기, 검정 역사 교과서 출판사 명명 금지.
+- **근거**: C3 탐구 아크(compelling/supporting question)는 2022 개정 사회과 탐구
+  흐름(단원 탐구 질문 → 차시 탐구 질문 → 자료 기반 근거 → 논증)과 구조가
+  동형이라, ADR-6의 "레퍼런스는 재작성, 오케스트레이터는 diff" 원칙을 그대로
+  적용할 수 있었다 — ADR-7과 같은 논리의 재사용이다.
+- **기각한 대안**: 선택과목 전용 신규 레퍼런스 파일 — 선택과목 pedagogy는 자료
+  기반 탐구의 영역 심화일 뿐이라 파일 분리는 YAGNI였다(E-2). 타 교과(도덕과 등)
+  동거 확대 — ADR-5/ADR-7의 전면 대체 선례를 벗어나는 별도 논의가 필요해 이번
+  범위에서 제외했다.
+- **렌더러 예외 0건** — v0.1(ADR-7)의 예외 2건과 달리, 이번 확장은
+  `references/`·`SKILL.md`·파일럿·루브릭 증분만으로 끝났다. `scripts/` 렌더러
+  6종은 `aa48b18..HEAD` 구간에서 한 줄도 바뀌지 않았다.
+- **재검토 조건**: 역사 선택과목(세계사·동아시아 역사 기행 등) 지원 요청이 들어오면
+  history.md의 사료 탐구 아크를 그대로 재사용할 수 있는지 다시 검토한다.
+- **상세**: [역사·선택과목 확장 명세](docs/superpowers/plans/2026-08-30-history-electives-spec.md)
+  (E-1~E-10, §3 변경 대상 전수, §4 완료 기준).
+
 ---
 
 ## 5. 불변 원칙 (모든 구현 파일이 지켜야 할 것)
@@ -300,17 +335,19 @@ plugin/
 
 | 문서 | 역할 | 상태 |
 |---|---|---|
-| **DESIGN.md (이 문서)** | canonical 기준 — 왜 | v0.5 |
+| **DESIGN.md (이 문서)** | canonical 기준 — 왜 | v0.6 |
 | .claude-plugin/marketplace.json | 저장소 루트 마켓플레이스 매니페스트 — `/plugin marketplace add`의 진입점. 플러그인 본체는 `source: "./plugin"` | 2026-08-03 추가, 2026-08-30 social 리네이밍. `claude plugin validate` 통과, 로컬 경로로 add→install→details end-to-end 확인(스킬 2·MCP 2 인식) |
 | plugin/skills/ko12-lesson-planning/SKILL.md | 오케스트레이터 (원본 최소 diff) | 파일럿 검증본 (사회과 라우팅·과목 판별 문구 diff, 2026-08-29~30) |
 | plugin/skills/ko12-lesson-planning/references/curriculum-kr-mcp.md | Step 2 호출 시퀀스 — 표준 조회 방법 | 파일럿 검증본 (사회 절 실 MCP 대조 보정 완료) |
-| plugin/skills/ko12-lesson-planning/references/social.md | 사회 pedagogy 레퍼런스 | 사회과 이식본 (2026-08-29~30, Task 1) — `science.md`를 대체. 자료(source) 규칙·논쟁 가드레일·단원/차시 탐구 질문 구조 신설(ADR-7) |
+| plugin/skills/ko12-lesson-planning/references/social.md | 사회 pedagogy 레퍼런스 | 사회과 이식본 (2026-08-29~30, Task 1) — `science.md`를 대체. 자료(source) 규칙·논쟁 가드레일·단원/차시 탐구 질문 구조 신설(ADR-7). **v0.2: 고 밴드에 선택과목 분기 절 증분(2026-08-30, Task 4, ADR-8)** |
+| plugin/skills/{ko12-lesson-planning,ko12-lesson-differentiation}/references/history.md | 역사 pedagogy 레퍼런스 (사료 탐구 아크) | **신설 (2026-08-30, Task 2–3, ADR-8)** — 사실/해석 구분·시대착오 금지·사료 없는 단정 금지·복수 해석 병기 가드레일. 3범주·차별화 R1–R8 구조는 social.md와 동형 재사용 |
 | plugin/skills/ko12-lesson-differentiation/ | 차별화 스킬 (SKILL.md + social.md + curriculum-kr-mcp.md + scripts) | 사회과 재이식 완료 (2026-08-29~30) — `science.md`를 `social.md`로 전면 대체, R1–R8을 사회과 자료 규칙에 맞춰 재작성, 실생성 3패키지 검증 |
 | plugin/skills/ko12-lesson-planning/scripts/render_lesson_hwpx.py | HWPX 어댑터 (OWPML 직접 생성) | 2단계 구현·전수 검증 완료. 앱명 메타데이터 문자열만 social로 교체(2026-08-30) — 그 외 렌더 로직은 과학판과 동일(S-5 예외 2건은 ADR-7 참조) |
 | plugin/skills/ko12-lesson-planning/references/example_lesson.json | 산출 JSON 스키마 예시 | 사회과·한국어판으로 교체 (2026-08-29, Task 1) — `[9사(일사)01-01]` 소재, 번호 과제·힌트 카드 문서로 스키마 폭 유지 |
+| pilot/ | ground-truth 검증 픽스처 — 렌더 산출물이 실측과 일치하는지 확인하는 회귀 표본 | **역사·선택과목 4+1종 신설(2026-08-30, Task 6, ADR-8)**: middle-history(수업 설계+차별화, `[9역13-03]`)·korean-history(`[10한사1-03-01]`)·elective-econ(`[12경제03-03]`)·elective-law(`[12법사02-02]`) — 전 검사 층 통과. 기존 v0.1 파일럿 7패키지 무변경 유지 |
 | docs/superpowers/pilot-notes.md | 파일럿·구현 실측 기록 — 무엇을 확인했나 (과학판 1–3단계, 동결) | 사회과 파일럿 실측은 `docs/superpowers/plans/2026-08-29-social-port.md`·`docs/superpowers/social-map-survey.md`가 이어받는다 |
 | tests/check_lesson.py | DoD 자동 검증기 (결정론, 표준 라이브러리만) | hwpx 텍스트 추출 기반으로 재작성 (2026-08-03, ADR-4 재개정에 따라). 사회과 파일럿 4종에도 무수정 적용, DoD 4/4 |
 | docs/evals-port-review.html | evals 한국판 보정 전수 대조(과학판 기준) — 항목별 원본/보정 나란히, 변경 성격 3분류(A 측정 대상 부재 / B 우리 스펙 편 / C 계측기 수리) | `docs/evals_port_review.py`가 생성 (2026-08-03, **과학판 시절 기록으로 동결**) — 대조 대상이던 `science.csv`가 사회과 이식으로 삭제되어 재실행 불가. 스크립트 머리에 계보 주석 추가(2026-08-30) |
 | docs/evals-unchanged-criteria.md | 손대지 않은 38항목 전문(과학판 기준) — 위 대조의 나머지 절반 | 동 스크립트 `--unchanged` (2026-08-03, **과학판 시절 기록으로 동결** — 사유는 위 행과 동일) |
-| evals/ | 산출물 채점 루브릭 (LLM-judge용, tests/의 결정론 검증을 보완) | **사회과 이식 완료 (2026-08-30)** — planning 44항목(shared 33 + `social.csv` 11) · differentiation 29항목(27+2) · hwpx-format 10항목(과목 무관, 무수정). `social.csv`가 `science.csv`를 대체. 각 항목 Notes에 원본/과학판 대비 개변 사유 기록 |
+| evals/ | 산출물 채점 루브릭 (LLM-judge용, tests/의 결정론 검증을 보완) | **사회과 이식 완료 (2026-08-30)** — planning 44항목(shared 33 + `social.csv` 11) · differentiation 29항목(27+2) · hwpx-format 10항목(과목 무관, 무수정). `social.csv`가 `science.csv`를 대체. 각 항목 Notes에 원본/과학판 대비 개변 사유 기록. **v0.2: `history.csv` 신설(P-H 15항목, 2026-08-30, Task 7, ADR-8)** — 역사 패키지는 `shared`+`history`로 채점하고 `social.csv`는 미적용. `social.csv`에 선택과목 Conditional 2행 증분(`R-C3`·`O-C1`, 기존 11행 무수정) |
 | evals/runs/ | 실채점 기록 — 판정 JSON(항목별 근거 포함) + 집계표 + `aggregate.py` | **사회과 1차 실행 완료 (2026-08-30)**: 14 판정 파일 333칸 = 281 PASS / 0 FAIL / 52 skip — planning 167/167·differentiation 72/72·hwpx-format 42/42(`evals/runs/2026-08-30/summary.md`). 100%의 천장은 278/281=98.9%(차별화 `O1` 문면 모호성 1건 반영 시). 미측정: 대화 행동 19칸·HWPX 실물 층(쪽 나눔·편집 내성) 28칸. 과학판 이력(2026-08-06·2026-08-08)은 해당 날짜 폴더에 계보로 보존 |
