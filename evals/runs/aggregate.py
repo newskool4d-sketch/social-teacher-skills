@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2026 science-teacher-skills contributors
+# SPDX-FileCopyrightText: 2026 social-teacher-skills contributors
 # SPDX-License-Identifier: Apache-2.0
 """판정 JSON을 루브릭 순서대로 접어 집계표와 무결성 검사를 낸다.
 
@@ -17,7 +18,7 @@ EVALS = os.path.dirname(HERE)
 # 판정 파일이 "rubrics" 필드로 자기 루브릭을 선언하지 않던 초기 실행(2026-08-06
 # 이전 형식) 호환용 기본값.
 DEFAULT_RUBRICS = ["ko12-lesson-planning/rubrics/shared.csv",
-                   "ko12-lesson-planning/rubrics/science.csv"]
+                   "ko12-lesson-planning/rubrics/social.csv"]
 MARK = {True: "○", False: "×", "skip": "–"}
 
 

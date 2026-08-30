@@ -1,5 +1,6 @@
 <!--
 SPDX-FileCopyrightText: 2026 science-teacher-skills contributors
+SPDX-FileCopyrightText: 2026 social-teacher-skills contributors
 SPDX-License-Identifier: Apache-2.0
 -->
 

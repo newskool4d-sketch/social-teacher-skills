@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2026 science-teacher-skills contributors
+# SPDX-FileCopyrightText: 2026 social-teacher-skills contributors
 # SPDX-License-Identifier: Apache-2.0
+
+# 과학판 이식 검토 기록 생성기 — science.csv 삭제로 재실행 불가, 산출물
+# docs/evals-port-review.html은 계보 기록이다.
 
 """evals 루브릭 한국판 보정 — 원본 대 보정 전수 대조 페이지 생성기.
 

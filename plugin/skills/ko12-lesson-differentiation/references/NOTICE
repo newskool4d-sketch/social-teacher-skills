@@ -1,3 +1,17 @@
 © 2010 National Governors Association Center for Best Practices and Council of Chief State School Officers. All rights reserved.
 
 The Common Core State Standards included in these reference files are used under the public license available at: https://www.thecorestandards.org/public-license/
+
+---
+
+This repository is a derivative work with two layers of lineage:
+
+1. It ports Anthropic, PBC and Learning Commons's `k12-teacher-skills` v0.6.0
+   (Apache-2.0) — https://github.com/anthropics/k12-teacher-skills — to the
+   Korean 2022 revised national curriculum.
+2. It is itself a fork of `raphysicst-create/science-teacher-skills`
+   v0.3.0-preview.1 (Apache-2.0) — the science-only Korean port — replaced
+   end-to-end for the 사회(social studies) subject.
+
+See NOTICE headers in individual files and DESIGN.md ADR-7 for what changed
+at each layer.

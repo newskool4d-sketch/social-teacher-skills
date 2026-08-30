@@ -2,6 +2,7 @@
 # Copyright 2026 Anthropic, PBC
 # Copyright 2026 Learning Commons
 # Copyright 2026 science-teacher-skills contributors
+# Copyright 2026 social-teacher-skills contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Render every document in a material-source JSON to editable HWPX (한글) files.
@@ -1016,7 +1017,7 @@ def render(data: dict, out_path: str) -> int:
            'xmlns:hpf="http://www.hancom.co.kr/schema/2011/hpf" '
            'xmlns:hh="http://www.hancom.co.kr/hwpml/2011/head">'
            '<opf:metadata><opf:meta name="generator" '
-           'content="science-teacher-skills render_lesson_hwpx"/></opf:metadata>'
+           'content="social-teacher-skills render_lesson_hwpx"/></opf:metadata>'
            '<opf:manifest>'
            '<opf:item id="header" href="Contents/header.xml" media-type="application/xml"/>'
            '<opf:item id="section0" href="Contents/section0.xml" '
@@ -1031,7 +1032,7 @@ def render(data: dict, out_path: str) -> int:
                '<hv:HCFVersion xmlns:hv="http://www.hancom.co.kr/hwpml/2011/version" '
                'tagetApplication="WORDPROCESSOR" major="5" minor="1" micro="1" '
                'buildNumber="0" os="10" xmlVersion="1.5" '
-               'application="science-teacher-skills" appVersion="1.0"/>')
+               'application="social-teacher-skills" appVersion="1.0"/>')
     settings = ('<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'
                 '<ha:HWPApplicationSetting '
                 'xmlns:ha="http://www.hancom.co.kr/hwpml/2011/app" '

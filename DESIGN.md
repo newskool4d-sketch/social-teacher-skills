@@ -1,8 +1,10 @@
-# science-teacher-skills — 기초 설계 문서 (DESIGN.md)
+# social-teacher-skills — 기초 설계 문서 (DESIGN.md)
 
-**버전**: 0.4 (2단계 HWPX 완료 — 2026-08-01)
+**버전**: 0.5 (사회과 이식 — 2026-08-30)
 **상태**: 이 문서가 프로젝트의 canonical 기준이다. 구현 파일(레퍼런스·스펙·스크립트)과
 이 문서가 충돌하면 이 문서를 고치거나 구현을 고친다 — 둘이 어긋난 채 두지 않는다.
+ADR-1~6은 과학판(`science-teacher-skills` v0.3.0-preview.1) 시절의 계보 기록으로
+무수정 유지한다 — 사회과 이식에서 새로 필요했던 결정은 ADR-7 하나다.
 
 ---
 
@@ -11,29 +13,39 @@
 ### 1.1 한 문장 정의
 
 Anthropic의 `k12-teacher-skills`(수업 설계·차별화 스킬 플러그인)를 **한국 2022 개정
-교육과정 체제로 이식**한 과학 전용 오픈소스 Claude 플러그인. 성취기준 데이터는 한국
-학습맵 MCP 2종에서, 문서 산출은 (2단계부터) HWPX로.
+교육과정 체제로 이식**한 과학 전용판 [`science-teacher-skills`](https://github.com/raphysicst-create/science-teacher-skills)
+v0.3.0-preview.1을 **사회과로 전면 대체**한 오픈소스 Claude 플러그인. 성취기준 데이터는
+한국 학습맵 MCP 2종에서, 문서 산출은 HWPX로.
 
 ### 1.2 해결하는 문제
 
-원본 스킬은 미국 표준 체계(CCSS/NGSS/C3)와 미국 커리큘럼(IM/OpenSciEd), Learning
-Commons KG에 결합되어 있어 한국 교사에게는 세 가지가 어긋난다:
+원본 스킬은 미국 표준 체계(CCSS/C3)와 미국 커리큘럼(IM 등), Learning Commons KG에
+결합되어 있어 한국 교사에게는 세 가지가 어긋난다:
 
-1. **표준 체계** — 성취기준 코드·원문·선수관계가 미국 것
-2. **pedagogy 전제** — 3차원 학습(SEP/DCI/CCC), 미국 학제(K–12), 미국 커리큘럼 분기
+1. **표준 체계** — 성취기준 코드·원문·선수관계가 미국 것, 주(state)별 성취기준 판별 분기
+2. **pedagogy 전제** — C3 탐구 아크(compelling question → supporting question → 증거
+   평가 → 시민적 행동), 미국 학제(K–12)
 3. **문서 형식** — docx 중심 (한국 학교 행정 맥락은 HWP/HWPX)
 
 ### 1.3 범위에 포함
 
-- `ko12-lesson-planning` 스킬 (1차, 완료) · `ko12-lesson-differentiation` 스킬 (2차, 완료)
-- 과목: 과학 단일 (초·중등 과학, 고교 통합과학·과학탐구실험·선택 과학)
-- 학교급: 초3 – 고3 보통교과 (초1–2는 과학 교과가 없어 특례 처리, ADR-2)
-- MCP 번들: 한국 학습맵 2종
+- `ko12-lesson-planning` 스킬 · `ko12-lesson-differentiation` 스킬 (스킬명은 과목 중립
+  이라 과학판에서 무수정 이월, ADR-7)
+- 과목: 사회 단일 — 초3–6 사회, 중학교 사회(일반사회·지리 통합), 고교 **통합사회1·2**
+  (공통과목)
+- 학교급: 초3–6 / 중1–3 / 고1 통합사회까지 (초1–2는 사회 교과가 없어 특례 처리, ADR-2
+  계승 — science.md가 소유하던 Clarify 절 로직을 social.md가 이어받음)
+- 학교급 내 제외: 중·고 역사·한국사(별도 과목 체계), 고교 일반·진로선택(정치와 법,
+  사회와 문화, 세계시민과 지리 등) — §3 사회과 고유 요구사항은 spec 참조
+- MCP 번들: 한국 학습맵 2종 (과학판과 동일 — 사회과 성취기준이 이미 두 학습맵에
+  수록되어 있어 신규 MCP가 필요 없다)
 
 ### 1.4 범위에서 제외 (명시적 non-goals)
 
-- 과학 외 과목 — 과학 전용으로 범위 확정 (2026-08-01). 초기 설계의 다과목 확장 계획
-  (구 ADR-5, BATCH_SPEC.md)은 폐기했다.
+- 사회 외 과목 — 사회 전용으로 범위 확정 (spec S-1, 2026-08-29). 과학판
+  (`science-teacher-skills`)은 별도 upstream 저장소로 계속 존재하며, 과학+사회 동거
+  구조는 만들지 않는다(ADR-7).
+- 역사·한국사, 고교 일반/진로선택 과목 — §1.3 참조
 - 특성화고 전문교과·특목고 계열 (학습맵 데이터 자체가 없음)
 - 검정 교과서 콘텐츠 재현 (저작권 + 출판사 중립 원칙, §5.4)
 - 평가(채점·루브릭·생기부) **스킬** — 원본에도 없고, 별도 프로젝트 영역.
@@ -182,6 +194,41 @@ plugin/
   수개월의 프롬프트 엔지니어링 산물로 추정되며, 건드릴수록 회귀 위험. 반면 과목
   레퍼런스는 내용 자체가 미국산이라 diff로는 안 된다.
 
+### ADR-7. 사회과 이식 — 전면 대체, 자료 규칙·논쟁 가드레일 신설 (2026-08-30)
+
+- **결정**: 과학판(`science-teacher-skills` v0.3.0-preview.1)을 과학+사회 동거 구조로
+  확장하지 않고 **사회과로 전면 대체**한다(spec S-1 — ADR-5 다과목 포팅 폐기 선례를
+  따름). 목표 프레임 3범주(ADR-1)·학년군 분기(ADR-2)·학습맵 2종 병렬(ADR-3)·렌더링
+  방식(ADR-4)·SKILL.md diff 원칙(ADR-6)은 전부 무수정 이월한다 — 이 결정들은 과목에
+  의존하지 않는다. 사회과에서 새로 필요했던 것은 셋뿐이다.
+  1. **자료(source) 규칙 신설** — 앵커가 "관찰 가능한 현상"에서 "쟁점·사례·자료(사료·
+     통계·지도)"로 바뀌면서, 법령·조례·정부 간행물·공공데이터·저작권 만료 사료는 발췌
+     수록하고 신문 기사·교과서 지문·저작권 자료는 지목만 하는 2단 규칙이 필요했다.
+  2. **논쟁 문제 수업 가드레일 신설** — 정답화 금지·실재 정당/정치인 명명 금지·가치
+     문항의 "근거를 들어 자신의 입장을" 형식·모델의 입장 표명 금지 4항. 근거는 교육
+     기본법 제6조(교육의 중립성). 과학판에는 없던 요구다.
+  3. **범위 확장** — 과학판이 "고교 미검증"으로 남겼던 공백을 고1 **통합사회1·2**
+     파일럿(`pilot/high-integrated`)으로 해소했다(spec S-10).
+- **근거**: C3 탐구 아크(compelling/supporting question)는 2022 개정 사회과 탐구 흐름
+  (단원 탐구 질문 → 차시 탐구 질문 → 자료 기반 근거 → 논증)과 구조가 동형이라, ADR-6의
+  "레퍼런스는 재작성, 오케스트레이터는 diff" 원칙을 그대로 적용할 수 있었다.
+- **기각한 대안**: 과학+사회 동거 플러그인 — 로딩 시점에 과목을 감지해 레퍼런스를
+  분기하는 방식도 검토했으나, ADR-5의 근거("레퍼런스는 과목마다 본질적으로 다른 문서라
+  diff가 아니라 재작성이 필요하다")가 그대로 재현되어 이점이 없었다.
+- **렌더러 예외 2건 (S-5 — "렌더러 6종 무수정" 원칙의 유일한 예외)**: 둘 다 사회과
+  파일럿 실채점 중 발견된 실결함이며 리네이밍과 무관하다(commit 06edfb2, 두 스킬 사본
+  동일 적용, cmp 동일성 유지).
+  - `source_card` byline 구분자를 HTML(" — ")과 HWPX(" · ")가 다르게 내보내 패리티
+    검사(P1)가 byline 누락으로 오판정 — HWPX(교사 전달물) 쪽에 HTML을 맞췄다
+    (`render_lesson_html.py` 1줄).
+  - 번호 라벨("1. ") 문단이 목록 내어쓰기 없이 나가는 결함(F4) — `PP_LIST_KEEP` paraPr을
+    신설해 번호 라벨에만 목록 내어쓰기 + keepWithNext를 함께 적용했다(`render_lesson_hwpx.py`).
+- **재검토 조건**: 세 번째 과목(수학·국어 등)을 이식할 필요가 생기면 ADR-5/S-1의 전면
+  대체 원칙을 다시 검토한다 — 동거 구조가 정당화되려면 레퍼런스 diff 비율이 지금까지의
+  두 사례(과학→사회)보다 훨씬 높아야 한다.
+- **상세**: [사회과 이식 명세](docs/superpowers/plans/2026-08-29-social-port-spec.md)
+  (S-1~S-10, §4 변경 대상 전수, §5 완료 기준).
+
 ---
 
 ## 5. 불변 원칙 (모든 구현 파일이 지켜야 할 것)
@@ -252,17 +299,17 @@ plugin/
 
 | 문서 | 역할 | 상태 |
 |---|---|---|
-| **DESIGN.md (이 문서)** | canonical 기준 — 왜 | v0.4 |
-| .claude-plugin/marketplace.json | 저장소 루트 마켓플레이스 매니페스트 — `/plugin marketplace add`의 진입점. 플러그인 본체는 `source: "./plugin"` | 2026-08-03 추가. `claude plugin validate` 통과, 로컬 경로로 add→install→details end-to-end 확인(스킬 2·MCP 2 인식) |
-| plugin/skills/ko12-lesson-planning/SKILL.md | 오케스트레이터 (원본 최소 diff) | 파일럿 검증본 |
-| plugin/skills/ko12-lesson-planning/references/curriculum-kr-mcp.md | Step 2 호출 시퀀스 — 표준 조회 방법 | 파일럿 검증본 (실 MCP 대조 보정 완료) |
-| plugin/skills/ko12-lesson-planning/references/science.md | 과학 pedagogy 레퍼런스 | 파일럿 검증본 |
-| plugin/skills/ko12-lesson-differentiation/ | 차별화 스킬 (SKILL.md + science.md + curriculum-kr-mcp.md + scripts) | 2차 포팅 완료 (2026-08-01). R1–R8을 3범주 프레임으로 재작성, 실생성 4문서 검증 |
-| plugin/skills/ko12-lesson-planning/scripts/render_lesson_hwpx.py | HWPX 어댑터 (OWPML 직접 생성) | 2단계 구현·전수 검증 완료. 타이포그래피 보정 1회(2026-08-01), 한글 세부 조판은 추가 작업 대기 |
-| plugin/skills/ko12-lesson-planning/references/example_lesson.json | 산출 JSON 스키마 예시 | 과학·한국어판으로 교체 (2026-08-01). 파일럿 #1 기반 + 번호 과제·힌트 카드 문서로 스키마 폭 유지 |
-| docs/superpowers/pilot-notes.md | 파일럿·구현 실측 기록 — 무엇을 확인했나 | 1–3단계 기록 (3단계: 마켓플레이스 배포·설치본 스모크·경로 강건화·docx 제거, 2026-08-03) |
-| tests/check_lesson.py | DoD 자동 검증기 (결정론, 표준 라이브러리만) | hwpx 텍스트 추출 기반으로 재작성 (2026-08-03, ADR-4 재개정에 따라) |
-| docs/evals-port-review.html | evals 한국판 보정 전수 대조 — 항목별 원본/보정 나란히, 변경 성격 3분류(A 측정 대상 부재 / B 우리 스펙 편 / C 계측기 수리) | `docs/evals_port_review.py`가 생성 (2026-08-03). 판정표는 그 스크립트의 `CLASSIFICATION`에 있다 |
-| docs/evals-unchanged-criteria.md | 손대지 않은 38항목 전문 — 위 대조의 나머지 절반. "고장난 것만 고쳤다"를 독자가 대조로 확인할 수 있게 한다 | 동 스크립트 `--unchanged` (2026-08-03). 업스트림 원문 그대로, 번역하지 않음 |
-| evals/ | 산출물 채점 루브릭 (LLM-judge용, tests/의 결정론 검증을 보완) | **한국판 보정 완료 (2026-08-03)** — 69항목. 폴더명 `ko12-*`로 정렬. 재설계 4(P-S1·P-S4 NGSS 3차원→3범주, M-CLARIFY-STATE→학년 확인 + 초1–2 특례) · 보정 22 · 나머지 원본 유지. 채점 기준 열의 미국 체제 잔재 0건 전수 확인. 각 항목 Notes에 원본 대비 개변 사유 기록 |
-| evals/runs/ | 실채점 기록 — 판정 JSON(항목별 근거 포함) + 집계표 + `aggregate.py` | **1차 실행 완료 (2026-08-06)**: 파일럿 4패키지 × planning 40항목 = 160칸, PASS 149 / FAIL 6 / skip 5. fail 6건 재대조 결과 5건 실결함·1건(O3) 판정자 편차. 한계는 pilot-notes 참조 — 판정자 1명/패키지, pass 재대조 안 함, 고교 0건, M3 판정 불가, differentiation 루브릭 미채점 |
+| **DESIGN.md (이 문서)** | canonical 기준 — 왜 | v0.5 |
+| .claude-plugin/marketplace.json | 저장소 루트 마켓플레이스 매니페스트 — `/plugin marketplace add`의 진입점. 플러그인 본체는 `source: "./plugin"` | 2026-08-03 추가, 2026-08-30 social 리네이밍. `claude plugin validate` 통과, 로컬 경로로 add→install→details end-to-end 확인(스킬 2·MCP 2 인식) |
+| plugin/skills/ko12-lesson-planning/SKILL.md | 오케스트레이터 (원본 최소 diff) | 파일럿 검증본 (사회과 라우팅·과목 판별 문구 diff, 2026-08-29~30) |
+| plugin/skills/ko12-lesson-planning/references/curriculum-kr-mcp.md | Step 2 호출 시퀀스 — 표준 조회 방법 | 파일럿 검증본 (사회 절 실 MCP 대조 보정 완료) |
+| plugin/skills/ko12-lesson-planning/references/social.md | 사회 pedagogy 레퍼런스 | 사회과 이식본 (2026-08-29~30, Task 1) — `science.md`를 대체. 자료(source) 규칙·논쟁 가드레일·단원/차시 탐구 질문 구조 신설(ADR-7) |
+| plugin/skills/ko12-lesson-differentiation/ | 차별화 스킬 (SKILL.md + social.md + curriculum-kr-mcp.md + scripts) | 사회과 재이식 완료 (2026-08-29~30) — `science.md`를 `social.md`로 전면 대체, R1–R8을 사회과 자료 규칙에 맞춰 재작성, 실생성 3패키지 검증 |
+| plugin/skills/ko12-lesson-planning/scripts/render_lesson_hwpx.py | HWPX 어댑터 (OWPML 직접 생성) | 2단계 구현·전수 검증 완료. 앱명 메타데이터 문자열만 social로 교체(2026-08-30) — 그 외 렌더 로직은 과학판과 동일(S-5 예외 2건은 ADR-7 참조) |
+| plugin/skills/ko12-lesson-planning/references/example_lesson.json | 산출 JSON 스키마 예시 | 사회과·한국어판으로 교체 (2026-08-29, Task 1) — `[9사(일사)01-01]` 소재, 번호 과제·힌트 카드 문서로 스키마 폭 유지 |
+| docs/superpowers/pilot-notes.md | 파일럿·구현 실측 기록 — 무엇을 확인했나 (과학판 1–3단계, 동결) | 사회과 파일럿 실측은 `docs/superpowers/plans/2026-08-29-social-port.md`·`docs/superpowers/social-map-survey.md`가 이어받는다 |
+| tests/check_lesson.py | DoD 자동 검증기 (결정론, 표준 라이브러리만) | hwpx 텍스트 추출 기반으로 재작성 (2026-08-03, ADR-4 재개정에 따라). 사회과 파일럿 4종에도 무수정 적용, DoD 4/4 |
+| docs/evals-port-review.html | evals 한국판 보정 전수 대조(과학판 기준) — 항목별 원본/보정 나란히, 변경 성격 3분류(A 측정 대상 부재 / B 우리 스펙 편 / C 계측기 수리) | `docs/evals_port_review.py`가 생성 (2026-08-03, **과학판 시절 기록으로 동결**) — 대조 대상이던 `science.csv`가 사회과 이식으로 삭제되어 재실행 불가. 스크립트 머리에 계보 주석 추가(2026-08-30) |
+| docs/evals-unchanged-criteria.md | 손대지 않은 38항목 전문(과학판 기준) — 위 대조의 나머지 절반 | 동 스크립트 `--unchanged` (2026-08-03, **과학판 시절 기록으로 동결** — 사유는 위 행과 동일) |
+| evals/ | 산출물 채점 루브릭 (LLM-judge용, tests/의 결정론 검증을 보완) | **사회과 이식 완료 (2026-08-30)** — planning 44항목(shared 33 + `social.csv` 11) · differentiation 29항목(27+2) · hwpx-format 10항목(과목 무관, 무수정). `social.csv`가 `science.csv`를 대체. 각 항목 Notes에 원본/과학판 대비 개변 사유 기록 |
+| evals/runs/ | 실채점 기록 — 판정 JSON(항목별 근거 포함) + 집계표 + `aggregate.py` | **사회과 1차 실행 완료 (2026-08-30)**: 14 판정 파일 333칸 = 281 PASS / 0 FAIL / 52 skip — planning 167/167·differentiation 72/72·hwpx-format 42/42(`evals/runs/2026-08-30/summary.md`). 100%의 천장은 278/281=98.9%(차별화 `O1` 문면 모호성 1건 반영 시). 미측정: 대화 행동 19칸·HWPX 실물 층(쪽 나눔·편집 내성) 28칸. 과학판 이력(2026-08-06·2026-08-08)은 해당 날짜 폴더에 계보로 보존 |
