@@ -60,6 +60,15 @@ Three shared criteria moved their bar rather than their wording, and each one mo
 - **`P2` (both rubrics)** — social standards have almost no citable prerequisite edge (one across 252 secondary topics), and elementary edges join sub-topics inside the same standard and are workstream-authored. 추정 marking is therefore the default path, and citing an elementary edge as official grounding is now a fail.
 - **`P2` 심화 branch (differentiation)** — social carries zero transition records, and the skill forbids "이후 ___로 심화된다". The criterion no longer asks for a forward standard; it grounds 심화 in R7's validity conditions and fails a transition claim.
 
+이와 별개로 shared 두 항목 — `P6b`(look-for의 범주 귀속)와 `O3`(관찰 템플릿의 현장 사용성) — 은 **문면만
+고쳤고 산출물 판정은 바뀌지 않았다.** 두 건은 **바를 옮긴 것이 아니라 계측기를 고친 것**이다(2026-08-30 fix 회차). `P6b`는 pass 절의 검증
+불가능한 요구("왜 중요한지")를 판정 가능한 대체물(관찰 템플릿이 범주 접두의 용도를 한 줄로 밝히는가)로
+바꿔 Fail 절과 정합시켰고 — 실채점이 이미 Fail 절 기준으로 이뤄졌으므로 이 방향이 판정 보존이다 —
+교사 동작의 구체성을 fail 조건으로 새로 명시했다. `O3`은 학생 행동이 **표의 행 라벨**로 오는 배치만
+인정하던 문면을, 이 스킬이 실제로 렌더하는 배치('관찰 포인트 목록 + 그 아래 기록 격자')에서도 판정할 수
+있게 다시 썼다(2026-08-06 과학판에서 판정 편차로 기록된 자리다). 배치 자유도는 넓어졌고 fail 조건은
+유지된다.
+
 `docs/evals-port-review.html` and `docs/evals-unchanged-criteria.md` document the 2026-08-03 upstream→Korean stage only; they are kept as the science-stage lineage record and do not cover this second stage.
 
 ## First run (2026-08-06) — 과학판 기록
@@ -95,9 +104,13 @@ at all (it judges the chat response, and these are archived artifacts), and `R-S
 | 루브릭 | 패키지 | 칸 | PASS | FAIL | skip | 채점 칸 통과율 |
 | :---- | ----: | ----: | ----: | ----: | ----: | ----: |
 | ko12-lesson-planning (`shared` 33 + `social` 11) | 4 | 176 | 167 | 0 | 9 | 100.0% |
-| ko12-lesson-differentiation (27 + 2) | 3 | 87 | 69 | 0 | 18 | 100.0% |
+| ko12-lesson-differentiation (27 + 2) | 3 | 87 | 72 | 0 | 15 | 100.0% |
 | hwpx-format (V1–V10) | 7 | 70 | 42 | 0 | 28 | 100.0% |
-| **합계** | | **333** | **278** | **0** | **55** | **100.0%** |
+| **합계** | | **333** | **281** | **0** | **52** | **100.0%** |
+
+**이 100%의 천장은 278/281 = 98.9%다.** 판정 칸 안에 문면이 갈릴 수 있는 자리가 1건
+(차별화 `O1` 3칸 — "한 턴에 실질을 갖춰 전달"이 보관 산출물로 관측되지 않는다) 남아 있고, 그것까지
+반대로 읽었을 때의 값이다. 수치를 인용할 때는 이 한 줄을 함께 싣는다.
 
 **FAIL 0은 처음부터 0이었다는 뜻이 아니다.** 1차 판정에서 `P2` fail 2건(중등 수업안 2종)이 나왔다 —
 선수 학습 콜아웃이 "학습맵에 기록이 없습니다"까지만 말하고 직전 선수 내용의 명명과 "추정" 표시를
@@ -105,8 +118,9 @@ at all (it judges the chat response, and these are archived artifacts), and `R-S
 파일럿 5종은 이미 지키고 있었으므로 산출물 결함으로 판정해 고치고 재렌더·재채점했다(수정 커밋은 분리).
 자세한 처분은 `runs/2026-08-30/summary.md`의 「FAIL 전건과 처분」 절에 있다.
 
-**이 수치가 덮지 못하는 것.** skip 55칸이 곧 측정 공백이다. (1) 대화 행동 — planning `M3` 4칸,
-differentiation `M1`–`M4`·`M-CLARIFY-*` 18칸 — 은 채팅·세션 기록이 없어 판정하지 않았다.
+**이 수치가 덮지 못하는 것.** skip 52칸이 곧 측정 공백이다. (1) 대화 행동 19칸 — planning `M3` 4칸,
+differentiation `M1`·`M3`·`M4` 9칸, `M-CLARIFY-*` 6칸 — 은 채팅·세션 기록이 없어 판정하지 않았다
+(차별화 `M2`는 pass 조건의 뒤쪽 선택지가 **문서에 적히는 문장**이라 산출물로 판정했다).
 (2) hwpx-format의 `V4`·`V5`·`V9`·`V10` 28칸은 한글 실행 환경과 PDF 스냅샷이 없어 쪽 나눔·머리행
 반복·편집 내성을 재지 못했다. 과학판 2026-08-08-r5의 68/68과는 **판정 범위가 달라 비교 대상이 아니다.**
 (3) 판정자는 단일 모델 1회전이고 사람 검증이 없다.
