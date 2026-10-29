@@ -218,8 +218,8 @@ middle-school(차별화)을 새로 렌더해 121칸 전수 재판정했고, 이�
 ## **Evals contents**
 | Rubric | Description |
 | :---- | :---- |
-| ko12-lesson-planning/rubrics/ | Rubrics for scoring lesson-plan outputs: `shared.csv` (33 core criteria) plus one subject rubric — `social.csv` (13: 11 + 선택과목 조건부 2) for 사회 계열, `history.csv` (15) for 역사 계열. 한 패키지에는 `shared` + 과목 루브릭 하나가 걸린다. This port keeps only the 사회·역사 rubrics; the upstream repository also ships rubrics for its other subjects. |
-| ko12-lesson-differentiation/rubrics/ | Rubrics for scoring differentiation outputs: `differentiation.csv` (27 tiered-differentiation criteria) and `clarifying_question.csv` (2 scorers for model clarification behavior) |
+| ko12-lesson-planning/rubrics/ | Rubrics for scoring lesson-plan outputs: `shared.csv` (33 core criteria) plus one subject rubric — `social.csv` (13: 11 + 선택과목 조건부 2) for 사회 계열, `history.csv` (20: 15 + 역사 선택과목 조건부 5) for 역사 계열. 한 패키지에는 `shared` + 과목 루브릭 하나가 걸린다. This port keeps only the 사회·역사 rubrics; the upstream repository also ships rubrics for its other subjects. |
+| ko12-lesson-differentiation/rubrics/ | Rubrics for scoring differentiation outputs: `differentiation.csv` (29 tiered-differentiation criteria, 역사 선택과목 조건부 2 포함) and `clarifying_question.csv` (2 scorers for model clarification behavior) |
 | hwpx-format/rubrics/ | `format.csv` — V1–V10, the visual-quality layer judged on the rendered 한글 documents after the automated checker reports zero fails |
 | live-conversation/rubrics/ | `live.csv` — L1–L7, the conversational-behaviour layer. 시나리오가 과학 전제여서 사회판에서는 아직 실측 전이다 (see that directory's README) |
 
