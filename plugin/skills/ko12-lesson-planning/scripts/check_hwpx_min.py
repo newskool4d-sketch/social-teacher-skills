@@ -11,7 +11,8 @@
   G1 zip·mimetype 구조    G2 XML well-formed    G3 U+FFFD 없음
   G4 본문 텍스트 존재      G5 영어 크롬 잔존 없음  G6 마크다운 리터럴(**) 없음
 
-Usage: python check_hwpx_min.py <outdir>
+Usage: python check_hwpx_min.py <outdir> [<stem> ...]
+  stem을 주면 그 문서들의 hwpx만 검사한다(이번 실행에서 쓴 파일 — 이전 실행의 잔여물 제외).
 Exit 0 = 통과, 1 = 실패(렌더 산출물을 교사에게 전달하지 말 것).
 """
 from __future__ import annotations
@@ -64,17 +65,18 @@ def check(path: Path) -> list[str]:
 
 
 def main() -> int:
-    if len(sys.argv) != 2:
-        print("usage: check_hwpx_min.py OUTDIR", file=sys.stderr)
+    if len(sys.argv) < 2:
+        print("usage: check_hwpx_min.py OUTDIR [STEM ...]", file=sys.stderr)
         return 2
     outdir = Path(sys.argv[1])
-    files = sorted(outdir.glob("*.hwpx"))
+    stems = sys.argv[2:]
+    files = [outdir / f"{s}.hwpx" for s in stems] if stems else sorted(outdir.glob("*.hwpx"))
     if not files:
         print(f"gate: {outdir}에 hwpx 없음", file=sys.stderr)
         return 1
     bad = 0
     for f in files:
-        errs = check(f)
+        errs = check(f) if f.exists() else ["G1: 파일이 만들어지지 않음"]
         if errs:
             bad += 1
             print(f"gate FAIL: {f.name}", file=sys.stderr)

@@ -57,7 +57,8 @@ jobs:
                    middle-history korean-history elective-econ elective-law; do
             bash plugin/skills/ko12-lesson-planning/scripts/render_all.sh \
               "pilot/$p/lesson.json" "/tmp/out-$p" html,txt,md,hwpx
-            python tests/check_lesson.py "pilot/$p/lesson.json" "/tmp/out-$p"
+            python tests/check_lesson.py "pilot/$p/lesson.json" "/tmp/out-$p" \
+              --ground-truth "pilot/$p/ground-truth.md"
           done
 
       - name: 파일럿 차별화 렌더 (4종)

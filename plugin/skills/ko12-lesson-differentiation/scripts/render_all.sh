@@ -21,12 +21,13 @@ here="$(cd "$(dirname "$0")" && pwd)"
 
 text_formats=""
 want_hwpx=0
+parsed=""
 IFS=',' read -r -a requested <<< "$formats"
 for f in "${requested[@]}"; do
   f="$(echo "$f" | tr -d '[:space:]')"
   case "$f" in
-    html|txt|md) text_formats="${text_formats:+$text_formats,}$f" ;;
-    hwpx) want_hwpx=1 ;;
+    html|txt|md) text_formats="${text_formats:+$text_formats,}$f"; parsed="$parsed,$f" ;;
+    hwpx) want_hwpx=1; parsed="$parsed,hwpx" ;;
     "") ;;
     *) echo "error: unknown format '$f' — use html, txt, md, hwpx" >&2; exit 2 ;;
   esac
@@ -36,6 +37,9 @@ if [ -z "$text_formats" ] && [ "$want_hwpx" -eq 0 ]; then
 fi
 
 mkdir -p "$outdir"
+# 문서별 출력 파일명(정제된 id) — 게이트·한글 엔진은 이번 실행에서 쓴 파일만 다룬다.
+# documents[]가 없는 단일 문서 JSON이면 비어 있다 — 그때는 outdir 전체를 다룬다(예전 동작).
+stems="$( (python3 "$here/render_documents.py" "$json" --list-ids 2>/dev/null || true) | tr -d '\r')"
 if [ -n "$text_formats" ]; then
   python3 "$here/render_documents.py" "$json" --outdir "$outdir" --formats "$text_formats"
 fi
@@ -44,11 +48,27 @@ if [ "$want_hwpx" -eq 1 ]; then
   # 최소 품질 게이트: 구조·인코딩·영어 크롬·마크다운 리터럴. 실패하면 여기서 멈춘다 —
   # 게이트에 걸린 산출물은 교사에게 전달하지 않는다. (전체 검사는 저장소의
   # tests/check_hwpx_quality.py — hwpx-quality-loop 참고.)
-  python3 "$here/check_hwpx_min.py" "$outdir"
+  # shellcheck disable=SC2086  # stems는 [A-Za-z0-9_-]만 — 단어 분리가 안전하다
+  python3 "$here/check_hwpx_min.py" "$outdir" $stems
   # 출력 엔진: 설치된 한글이 기본(HWPX_ENGINE=auto) — 한글로 열어 다시 저장한다.
   # 한글이 없거나 실패하면 위에서 게이트를 통과한 Python 산출물을 그대로 쓴다.
-  python3 "$here/hancom_engine.py" "$outdir" --engine "${HWPX_ENGINE:-auto}"
+  # shellcheck disable=SC2086
+  python3 "$here/hancom_engine.py" "$outdir" $stems --engine "${HWPX_ENGINE:-auto}"
 fi
+
+# 이전 실행의 잔여물(문서를 빼거나 이름을 바꾼 뒤, 또는 이번에 요청하지 않은 형식)은
+# 지우지 않고 알린다 — 이번 산출물로 착각해 교사에게 제시하는 일을 막는다.
+for f in "$outdir"/*.html "$outdir"/*.txt "$outdir"/*.md "$outdir"/*.hwpx; do
+  [ -n "$stems" ] && [ -e "$f" ] || continue
+  name="$(basename "$f")"
+  ext="${name##*.}"
+  stem="${name%.*}"
+  case "$parsed," in *",$ext,"*) ;; *) stem="" ;; esac
+  case " $(echo $stems) " in
+    *" $stem "*) ;;
+    *) echo "warning: 이번 실행에서 만들지 않은 이전 파일: $name — 교사에게 제시하지 말 것" >&2 ;;
+  esac
+done
 
 # Persist the source JSON alongside the rendered artifacts so later revision
 # turns can re-render from it (same guarantee the lesson-planning renderer

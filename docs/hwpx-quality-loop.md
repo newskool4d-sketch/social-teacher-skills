@@ -160,7 +160,7 @@ python .claude/skills/hwpx/scripts/roundtrip_hwpx.py <파일...> --outdir <임�
 
 ## LLM-judge 확장 (evals/hwpx-format/)
 
-자동 검사기가 못 보는 **시각 품질**(적정성 판단)은 `evals/hwpx-format/rubric.csv`
+자동 검사기가 못 보는 **시각 품질**(적정성 판단)은 `evals/hwpx-format/rubrics/format.csv`
 루브릭으로 LLM-judge 채점한다. 기존 evals 프레임(CSV 스키마·판정 JSON·
 aggregate.py)을 그대로 쓴다. 판정 입력은 (a) 검사기 `--json` 리포트,
 (b) HWPX 추출 텍스트, (c) 가능하면 한글 PDF 내보내기 스냅샷. 자동 검사가 fail 0을

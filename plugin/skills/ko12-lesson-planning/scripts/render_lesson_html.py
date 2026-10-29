@@ -245,7 +245,7 @@ def render_block(blk: dict, theme: Theme) -> str:
             lo_f, hi_f, span = 0.0, float(ticks), float(ticks)
         eps = abs(span) * 0.002
         marks = [(v, lab) for v, lab in marks
-                 if abs(v - lo_f) > eps and abs(v - hi_f) > eps]
+                 if lab or (abs(v - lo_f) > eps and abs(v - hi_f) > eps)]
         tick_html = "".join(
             f"<span class=\"nl-tick\" style=\"left:{(i/ticks)*100:.2f}%"
             + (";border-left:none" if is_blank else "") + "\">"

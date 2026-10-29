@@ -17,7 +17,8 @@ render_lesson_hwpx.py가 만든 HWPX를 설치된 한글로 열어 HWPX로 다�
   --engine hancom  한글 필수 — 쓸 수 없거나 실패하면 exit 1
   --engine python  한글을 쓰지 않음
 
-Usage: python hancom_engine.py OUTDIR [--engine auto|hancom|python]
+Usage: python hancom_engine.py OUTDIR [STEM ...] [--engine auto|hancom|python]
+  stem을 주면 그 문서들의 hwpx만 다시 저장한다(이번 실행에서 쓴 파일).
 """
 from __future__ import annotations
 
@@ -128,9 +129,12 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("outdir")
+    ap.add_argument("stems", nargs="*")
     ap.add_argument("--engine", choices=("auto", "hancom", "python"), default="auto")
     args = ap.parse_args()
-    files = sorted(Path(args.outdir).glob("*.hwpx"))
+    outdir = Path(args.outdir)
+    files = ([outdir / f"{s}.hwpx" for s in args.stems if (outdir / f"{s}.hwpx").exists()]
+             if args.stems else sorted(outdir.glob("*.hwpx")))
     if args.engine == "python" or not files:
         return 0
     ok, why = available()

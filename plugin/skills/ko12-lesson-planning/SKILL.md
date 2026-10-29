@@ -77,7 +77,8 @@ Teacher language only — name what the teacher is getting, never tool names, fi
      `[12역현…]`; 그리고 초1–2 포함) → **범위 밖.** 이 스킬은 사회·역사 전용이다. 교사에게
      알리고(예: *"이 도구는 사회·역사 수업 설계 전용이에요."*) 사회나 역사 수업으로 도울 일이
      있는지 묻는다. 사회·역사가 아니면 이 스킬 밖에서 일반 지식으로 돕되, 확인되지 않은
-     성취기준 코드는 인용하지 않는다.
+     성취기준 코드는 인용하지 않는다. 초1–2는 생성 전에, 그 학년에는 사회 교과가 없고
+     통합교과(바른 생활·슬기로운 생활) 맥락임을 함께 알린 뒤 사회과 범위에서 도울 일을 묻는다.
 
    **Loading the reference file is mandatory.** Drafting a lesson without first reading the
    assigned reference file (`references/social.md` for social studies, `references/history.md`
@@ -354,7 +355,7 @@ Include at minimum:
   page.** A K-2 phonics or oral lesson may have none; a source-heavy lesson may have this AND
   a separate `id: "source_packet"`. The subject file's *Student page layout* gives the
   default skeleton; adapt it to the lesson. If the teacher asked for leveled/tiered student
-  materials, label them Group A / B / C (A = below, B = at, C = above grade level) — level
+  materials, label them 가 모둠 / 나 모둠 / 다 모둠 (가 = 기초, 나 = 보통, 다 = 심화) — level
   wording stays in the teacher-facing documents.
 
 Inside any document, pull registered content with `{"type": "from_shared", "key": "…"}` —
@@ -413,7 +414,7 @@ printed on it.
 | `table` (no `headers`) | Term/definition pairs, label/value reference rows. |
 | `table` / `data_table` with `headers` | Real tabular data with column labels (misconceptions, scaffolds, the data set students analyze). `display: "large"` renders cells in big centered type — a word grid young students point to and read. |
 | `fill_table` | An organizer students write into — observation log, comparison grid, evidence collector. `rows` as a count gives blank rows; `rows` as a list mixes filled and blank — `[["cap","cape"], [], []]` shows a worked first row, then write-in space, and `[["Shell", "", ""]]` gives a labeled row with blank cells students write in (say what goes in the blank — a ✓, yes/no, a word — in the instruction line above). |
-| `number_line` | A drawn number line (`min`, `max`, `ticks`, optional `marks`). `ticks` omitted defaults to 10 evenly spaced segments; `ticks: 0` draws a bare line with only the `min`/`max` end labels and no tick marks, for students to partition themselves. |
+| `number_line` | A drawn number line (`min`, `max`, `ticks`, optional `marks`). `ticks` omitted defaults to 10 evenly spaced segments; `ticks` is capped at 100; `ticks: 0` draws a bare line with only the `min`/`max` end labels and no tick marks, for students to partition themselves. |
 | `source_card` | A primary or secondary source excerpt students read: title/author/date + the excerpt text. |
 | `answer_box` | Writing space after a task. With no `height_pt` it sizes itself to the grade band (K-2 ~200pt, 3-5 ~150pt, 6-8 ~130pt, 9-12 ~116pt). K-5 boxes draw ruled handwriting lines; `ruled: true` draws lines at any grade — the surface for answers of composed sentences — and `ruled: false` gives open space for drawing or model-sketching. A task answered in a `fill_table` or on a `number_line` already has its surface. |
 | `group` | Keeps a task's prompt, stimulus, supports, and answer box together so a page break never separates them. |
@@ -427,8 +428,13 @@ into the skill folder.
 
 ```bash
 SKILL_DIR="<absolute path of the folder containing this SKILL.md>"
+OUTPUT_DIR="${OUTPUT_DIR:-$PWD/수업자료/<성취기준 코드 또는 주제 — 수업마다 다른 이름>}"
 bash "$SKILL_DIR/scripts/render_all.sh" lesson.json "$OUTPUT_DIR" [FORMATS]
 ```
+
+**Output folder.** Give each new lesson its own subfolder (e.g. `수업자료/9사(일사)01-01`) so a
+second lesson never overwrites the first lesson's files and `lesson.json`; revision turns
+reuse the same folder.
 
 **Output formats.** `FORMATS` is an optional comma list of `html`, `txt`, `md`, `hwpx`. Omit
 it for the default `html,txt,md`. Add `hwpx` only when the teacher asks for 한글/HWPX files
@@ -450,7 +456,9 @@ document (never `lesson.json`), and present the documents to the
 teacher together — attach the lesson plan last so it lands on top (chat surfaces stack
 newest-first). If there is no `student_materials` document, say so plainly ("이 수업은 구두
 활동 중심이라 학생 유인물이 없어요 — 학생들은 …로 활동합니다"). If the script errors, fix
-`lesson.json` (it is almost always malformed JSON) and rerun. If file generation fails
+`lesson.json` as the error message says (malformed JSON, a `from_shared` key not
+registered in `shared`, an `audience` other than teacher/student, or duplicate document ids)
+and rerun. If file generation fails
 entirely, say so clearly — do not silently fall back to a chat-only delivery.
 
 ### 5c. The satisfaction ask + iteration options (every output turn)
@@ -469,7 +477,7 @@ End the turn with EXACTLY ONE closing message that does three things, in this or
 3. Offers 3–4 high-leverage, **specific** iteration options customized to the subject and
    topic. Do not write "let me know if you want changes" — that's a non-offer. For example,
    for a middle-school social studies inquiry lesson: *"(1) 자료 묶음에 사료 1종 추가, (2)
-   수준별 학생 자료 3종(A·B·C) 분화, (3) 블록 차시(2차시 연강)로 확장, (4) 과정중심평가
+   수준별 학생 자료 3종(가·나·다 모둠) 분화, (3) 블록 차시(2차시 연강)로 확장, (4) 과정중심평가
    기록지 추가 — 어느 쪽이 도움이 될까요?"* If this turn did not produce 한글 documents,
    one of the options is to also deliver them as editable 한글(HWPX) files.
 
@@ -488,8 +496,9 @@ keep the artifacts consistent:
 - A change aimed at one document (e.g. "more workspace on the worksheet", "add a column to the
   observation grid") goes in that document's `sections` — never by forking a `shared` key into
   two variants.
-- Styling: `theme` fields (`primary`, `title_size`, `body_size`) apply to every artifact.
-  Artifacts use minimal color so they print cleanly in black-and-white; do not set
+- Styling: `theme` fields (`primary`, `title_size`, `body_size`) apply only to the HTML
+  preview (웹 문서); 한글 문서·텍스트·마크다운 are fixed-format and ignore `theme`. When the
+  teacher asks for larger/smaller text, tell them it changes only the 웹 문서. Artifacts use minimal color so they print cleanly in black-and-white; do not set
   per-section or per-phase colors.
 
 ### 5e. Supplementary artifacts in their best format

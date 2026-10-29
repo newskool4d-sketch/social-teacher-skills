@@ -73,7 +73,7 @@ Learning Commons Knowledge Graph 호출 시퀀스를 한국 2022 개정 교육�
   `schoolLevel: "high"`, `gradeBand: "10"`(통합사회1·2와 같은 고교 공통과목 지위, 같은 문서
   §2-2). `search_standards`의 `subject` 값은 `"한국사1"`/`"한국사2"`. §7 부록의
   `get_standard("[10한사1-01-01]")` 재구성 예시도 code만으로 호출됐다.
-- **사회 선택과목 라우팅**(v0.2 신규 12개, social-map-survey-v2.md §6 표 verbatim 과목명):
+- **사회 선택과목 라우팅**(v0.2 신규 12개 — 과목명은 `references/social.md` '사회 매핑' 절 표):
   코드 접두 `[12경제`·`[12국관`·`[12금융`·`[12법사`·`[12사탐`·`[12사문`·`[12정치`·`[12기지`·
   `[12도탐`·`[12세지`·`[12여지`·`[12한탐`(뒤에 `NN-NN`)는 모두 secondary로, `schoolLevel:
   "high"`, `gradeBand: "10-12"`. `search_standards`의 `subject` 값은 과목명 그대로(예:
@@ -131,10 +131,13 @@ Learning Commons Knowledge Graph 호출 시퀀스를 한국 2022 개정 교육�
 2. **선수관계**: `get_prerequisites(topicId, depth: "all")` → 추출: 위상 정렬된 선수 경로
    (`pathOrder[]`)에서 **직전 선수 주제 1개**(그 주제가 속한 성취기준 코드 포함). 학습 목표
    섹션에 사용. 학습맵에 edge가 있는데 명시하지 않는 것은 치명적 실패다.
-   ⚠ 응답 필드명은 **`edges`**다(`{topicId, direction, edges: [...]}`). 과학판 문서의 `directEdges`
-   표기는 오기다(실측 2026-08-29, repo 데이터 기준 — 라이브 MCP 응답에서 재확인).
+   ⚠ `depth: "all"` 응답은 `{topicId, direction, pathOrder: [{topicId, titleKorean, directEdges}, …]}`
+   이며 최상위 `edges` 필드는 없다. `pathOrder`는 후위 순회라 **마지막 원소가 대상 주제 자신**이고,
+   직전 선수는 **끝에서 두 번째 원소**다 — 마지막 원소(자기 자신)를 선수로 인용하지 않는다(로컬
+   캐시 서버 v0.1.0 코드 기준 — 라이브 MCP 응답에서 재확인).
    ⚠ **사회과는 공식 근거가 있는 선수 edge가 거의 없다**(secondary 사회 관련 topic 252건
-   중 1건 — 실측). 나머지는 `edges: []`로 반환된다. 그 경우 훈련 지식으로 직전 선수 내용을
+   중 1건 — 실측). 나머지는 `pathOrder` 길이 1(대상 주제 자신뿐)로 반환되며, 이는 edge가 없다는
+   뜻이다. 그 경우 훈련 지식으로 직전 선수 내용을
    쓰되 **"추정"임을 수업안에 표시한다** — 학습맵 근거인 것처럼 쓰지 않는다.
    ⚠ **초등 edge는 있어도 "추정"으로 쓴다.** elementary는 edge가 조밀하지만(사회 topic
    147건 중 98건) 전부 같은 성취기준 **내부**의 하위주제 연결(`basis: "workstream-authored"`,
