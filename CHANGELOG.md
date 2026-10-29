@@ -10,6 +10,19 @@ SPDX-License-Identifier: Apache-2.0
 버전은 [SemVer](https://semver.org/lang/ko/)를 따른다. 수치를 주장하는 항목은 반드시
 `evals/runs/`의 실채점 기록을 가리킨다 — 측정 없이 수정 없다.
 
+## [Unreleased]
+
+### 변경 — 출력 형식
+
+- 기본 출력을 HTML·TXT·MD 3종으로 변경, 형식은 선택 가능
+  (`render_all.sh <json> <outdir> [html,txt,md,hwpx]`). HWPX는 요청 시에만 생성.
+- `scripts/render_text.py` 신설(두 스킬 사본 동일) — 블록 문서를 MD·TXT로 렌더.
+- `scripts/hancom_engine.py` 신설(두 스킬 사본 동일) — HWPX 기본 출력 엔진을 설치된
+  한글로: 내장 렌더러 산출물을 한글이 열어 HWPX로 재저장, 결과도 최소 게이트 통과 시에만
+  교체. 한글 불가 시 내장 렌더러 산출물 유지. `HWPX_ENGINE=auto|hancom|python`.
+- CI: 공유 파일 사본 동일 검사 8종으로 확대, 기본 형식 산출(HWPX 미생성) 검사 추가.
+  러너에 한글이 없어 한글 엔진 경로는 로컬 검증 대상.
+
 ## [0.2.0-preview.1] — 2026-08-30
 
 v0.1.0-preview.1(사회판) 위에 역사 계열(중학교 역사·고교 한국사1·2)과 고교 사회

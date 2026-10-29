@@ -3,7 +3,7 @@
 # Copyright 2026 Learning Commons
 # SPDX-License-Identifier: Apache-2.0
 
-"""Render every document in a multi-document source JSON to HTML.
+"""Render every document in a multi-document source JSON to HTML (and/or md, txt).
 
 Used by skills whose output is a set of documents that must stay consistent with each other
 (e.g. the differentiation skills: 1 teacher plan + 3 tiered worksheets). The source JSON holds
@@ -33,6 +33,7 @@ Material source shape:
 Usage:
     python render_documents.py differentiation.json                           # all docs -> HTML
     python render_documents.py differentiation.json --only worksheet_group_a worksheet_group_b
+    python render_documents.py lesson.json --formats html,md,txt               # + md, txt
 """
 from __future__ import annotations
 
@@ -63,7 +64,14 @@ def main() -> int:
     ap.add_argument("--only", nargs="*", default=None,
                     help="document ids to render (default: all)")
     ap.add_argument("--outdir", default=".")
+    ap.add_argument("--formats", default="html",
+                    help="comma list of html, md, txt (default: html)")
     args = ap.parse_args()
+    formats = [f.strip() for f in args.formats.split(",") if f.strip()]
+    unknown = [f for f in formats if f not in ("html", "md", "txt")]
+    if unknown or not formats:
+        print(f"error: unknown format(s) {unknown} — use html, md, txt", file=sys.stderr)
+        return 1
 
     source = json.loads(Path(args.input).read_text(encoding="utf-8"))
     docs = source.get("documents", [])
@@ -83,9 +91,12 @@ def main() -> int:
             continue
         full = build_doc(source, doc)
         from render_lesson_html import render as render_html
-        path = outdir / f"{doc_id}.html"
-        path.write_text(render_html(full), encoding="utf-8")
-        written.append(str(path))
+        from render_text import render as render_text
+        for fmt in formats:
+            text = render_html(full) if fmt == "html" else render_text(full, fmt)
+            path = outdir / f"{doc_id}.{fmt}"
+            path.write_text(text, encoding="utf-8")
+            written.append(str(path))
 
     if not written:
         print("nothing rendered — check --only ids against the documents' `id` fields",
