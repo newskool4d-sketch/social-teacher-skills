@@ -6,8 +6,9 @@
 # 한글 무결성, DoD, HWPX 구조 품질 검사기(S·F·C·P), 렌더러 사본 동일.
 # 렌더본은 저장소에 커밋하지 않는 정책(pilot/*/out*)이므로 CI가 파일럿을 매번 새로
 # 렌더해 검사한다 — 항상 현재 렌더러를 검사하게 된다.
-# 파일럿 8종은 사회과 밴드와 v0.2.0 신규 과목을 하나씩 맡는다 —
-# 초3–4 / 초5–6 / 중 사회 / 고 통합사회1 / 중 역사 / 한국사1 / 경제 / 법과 사회.
+# 파일럿 11종은 사회과 밴드와 v0.2·v0.3 신규 과목을 하나씩 맡는다 —
+# 초3–4 / 초5–6 / 중 사회 / 고 통합사회1 / 중 역사 / 한국사1 / 경제 / 법과 사회 /
+# 세계사 / 동아시아 역사 기행 / 역사로 탐구하는 현대 세계.
 # 성취기준 원문의 판정 근거는 각 파일럿의 ground-truth.md에 있다.
 # 한컴 COM 실열림·PDF 쪽 채움 실측은 한글이 필요해 CI에 들어올 수 없다 —
 # 그 층은 로컬 품질 루프가 맡는다 (docs/hwpx-quality-loop.md).
@@ -50,20 +51,22 @@ jobs:
           python tests/smoke/check_hwpx.py /tmp/ci-smoke
 
       # DoD는 완전한 수업 패키지의 계약(렌더 무결성·시간 합계·3범주·인용 1회) —
-      # 파일럿 8종을 새로 렌더한 산출물에 건다.
-      - name: 파일럿 수업 렌더 + DoD (8종)
+      # 파일럿 11종을 새로 렌더한 산출물에 건다.
+      - name: 파일럿 수업 렌더 + DoD (11종)
         run: |
           for p in elementary middle-school random-elementary high-integrated \
-                   middle-history korean-history elective-econ elective-law; do
+                   middle-history korean-history elective-econ elective-law \
+                   elective-world-history elective-east-asia elective-modern-world; do
             bash plugin/skills/ko12-lesson-planning/scripts/render_all.sh \
               "pilot/$p/lesson.json" "/tmp/out-$p" html,txt,md,hwpx
             python tests/check_lesson.py "pilot/$p/lesson.json" "/tmp/out-$p" \
               --ground-truth "pilot/$p/ground-truth.md"
           done
 
-      - name: 파일럿 차별화 렌더 (4종)
+      - name: 파일럿 차별화 렌더 (5종)
         run: |
-          for p in elementary middle-school random-elementary middle-history; do
+          for p in elementary middle-school random-elementary middle-history \
+                   elective-world-history; do
             bash plugin/skills/ko12-lesson-differentiation/scripts/render_all.sh \
               "pilot/$p/differentiation.json" "/tmp/diff-$p" html,txt,md,hwpx
           done
@@ -87,5 +90,7 @@ jobs:
             /tmp/out-random-elementary /tmp/out-high-integrated \
             /tmp/out-middle-history /tmp/out-korean-history \
             /tmp/out-elective-econ /tmp/out-elective-law \
+            /tmp/out-elective-world-history /tmp/out-elective-east-asia \
+            /tmp/out-elective-modern-world /tmp/diff-elective-world-history \
             /tmp/diff-elementary /tmp/diff-middle-school \
             /tmp/diff-random-elementary /tmp/diff-middle-history
