@@ -29,7 +29,8 @@ SPDX-License-Identifier: Apache-2.0
 # 한국 초·중등 수업 설계 (ko12-lesson-planning)
 
 Produces a teacher-ready, standards-aligned lesson plan + student-facing materials + teacher
-observation template as editable 한글(HWPX) documents in a single output turn, rendered from one material-source JSON via
+observation template in a single output turn — web(HTML)·text·Markdown documents by default, plus
+editable 한글(HWPX) documents when the teacher chooses them — rendered from one material-source JSON via
 bundled scripts. The social studies pedagogy and output mapping live in
 `references/social.md`. Works with or without the Korean curriculum learning-map MCPs
 (한국 교육과정 학습맵 — 초등·중등).
@@ -76,7 +77,8 @@ Teacher language only — name what the teacher is getting, never tool names, fi
      `[12역현…]`; 그리고 초1–2 포함) → **범위 밖.** 이 스킬은 사회·역사 전용이다. 교사에게
      알리고(예: *"이 도구는 사회·역사 수업 설계 전용이에요."*) 사회나 역사 수업으로 도울 일이
      있는지 묻는다. 사회·역사가 아니면 이 스킬 밖에서 일반 지식으로 돕되, 확인되지 않은
-     성취기준 코드는 인용하지 않는다.
+     성취기준 코드는 인용하지 않는다. 초1–2는 생성 전에, 그 학년에는 사회 교과가 없고
+     통합교과(바른 생활·슬기로운 생활) 맥락임을 함께 알린 뒤 사회과 범위에서 도울 일을 묻는다.
 
    **Loading the reference file is mandatory.** Drafting a lesson without first reading the
    assigned reference file (`references/social.md` for social studies, `references/history.md`
@@ -151,8 +153,8 @@ asked the same way as the clarify questions — through the structured question 
 one is available, in chat otherwise — as its own separate question, batched with Step 1's
 questions when there are any and asked on its own when there aren't.
 
-- Question: *교실에서 바로 쓸 전체 패키지(수업안 + 학생 자료 + 관찰 템플릿, 편집 가능한 한글
-  문서)를 만들까요, 아니면 빠른 초안을 먼저 보시겠어요?*
+- Question: *교실에서 바로 쓸 전체 패키지(수업안 + 학생 자료 + 관찰 템플릿)를 만들까요,
+  아니면 빠른 초안을 먼저 보시겠어요?*
 - Options: **바로 만들어 주세요** · **초안 먼저 볼게요** — 수업의 뼈대를 채팅에서 한눈에
 
 **The full packet is the default.** Declining, not answering, or anything like "proceed
@@ -181,7 +183,7 @@ and sections are called what the plan will call them.
 Afterwards, ask what's next — a structured question, two options:
 
 - **수정할게요** — 초안에서 고치고 싶은 부분 반영
-- **자료 만들어 주세요** — 수업안·학생 자료·관찰 템플릿을 편집 가능한 한글 문서로
+- **자료 만들어 주세요** — 수업안·학생 자료·관찰 템플릿을 문서로
 
 Apply change requests to the draft in chat and re-present it — changes are quick at this
 stage. Step 5 runs in the turn the teacher gives the go-ahead ("Create the materials",
@@ -214,11 +216,10 @@ behavior is fully specified by the commands and output paths in §5a–5d, and
 nothing this file doesn't already state.
 
 **Plain language with the teacher.** The machinery above is invisible to the teacher: never
-mention JSON, HTML, schemas, scripts, rendering, file names (`lesson.json`), or code in any
-teacher-facing message — and never link or name the `.html` files the render command also
-writes. Say *"수업안이 준비됐어요 — 학생 자료와 관찰 템플릿도 함께 왔습니다"*, not *"lesson.json을
-렌더링했어요"*. The only format words in your prose are
-"한글 문서" / "한글 파일". This
+mention JSON, HTML markup, schemas, scripts, rendering, working file names (`lesson.json`), or
+code in any teacher-facing message. Say *"수업안이 준비됐어요 — 학생 자료와 관찰 템플릿도 함께 왔습니다"*, not *"lesson.json을
+렌더링했어요"*. The only format words in your prose are "웹 문서", "텍스트 파일",
+"마크다운 파일", and — when produced — "한글 문서" / "한글 파일". This
 applies to every turn: presenting artifacts, the satisfaction ask, revision summaries, and
 error messages (if generation fails, say the documents couldn't be created — not that a
 script or JSON failed).
@@ -354,7 +355,7 @@ Include at minimum:
   page.** A K-2 phonics or oral lesson may have none; a source-heavy lesson may have this AND
   a separate `id: "source_packet"`. The subject file's *Student page layout* gives the
   default skeleton; adapt it to the lesson. If the teacher asked for leveled/tiered student
-  materials, label them Group A / B / C (A = below, B = at, C = above grade level) — level
+  materials, label them 가 모둠 / 나 모둠 / 다 모둠 (가 = 기초, 나 = 보통, 다 = 심화) — level
   wording stays in the teacher-facing documents.
 
 Inside any document, pull registered content with `{"type": "from_shared", "key": "…"}` —
@@ -413,7 +414,7 @@ printed on it.
 | `table` (no `headers`) | Term/definition pairs, label/value reference rows. |
 | `table` / `data_table` with `headers` | Real tabular data with column labels (misconceptions, scaffolds, the data set students analyze). `display: "large"` renders cells in big centered type — a word grid young students point to and read. |
 | `fill_table` | An organizer students write into — observation log, comparison grid, evidence collector. `rows` as a count gives blank rows; `rows` as a list mixes filled and blank — `[["cap","cape"], [], []]` shows a worked first row, then write-in space, and `[["Shell", "", ""]]` gives a labeled row with blank cells students write in (say what goes in the blank — a ✓, yes/no, a word — in the instruction line above). |
-| `number_line` | A drawn number line (`min`, `max`, `ticks`, optional `marks`). `ticks` omitted defaults to 10 evenly spaced segments; `ticks: 0` draws a bare line with only the `min`/`max` end labels and no tick marks, for students to partition themselves. |
+| `number_line` | A drawn number line (`min`, `max`, `ticks`, optional `marks`). `ticks` omitted defaults to 10 evenly spaced segments; `ticks` is capped at 100; `ticks: 0` draws a bare line with only the `min`/`max` end labels and no tick marks, for students to partition themselves. |
 | `source_card` | A primary or secondary source excerpt students read: title/author/date + the excerpt text. |
 | `answer_box` | Writing space after a task. With no `height_pt` it sizes itself to the grade band (K-2 ~200pt, 3-5 ~150pt, 6-8 ~130pt, 9-12 ~116pt). K-5 boxes draw ruled handwriting lines; `ruled: true` draws lines at any grade — the surface for answers of composed sentences — and `ruled: false` gives open space for drawing or model-sketching. A task answered in a `fill_table` or on a `number_line` already has its surface. |
 | `group` | Keeps a task's prompt, stimulus, supports, and answer box together so a page break never separates them. |
@@ -427,20 +428,37 @@ into the skill folder.
 
 ```bash
 SKILL_DIR="<absolute path of the folder containing this SKILL.md>"
-bash "$SKILL_DIR/scripts/render_all.sh" lesson.json "$OUTPUT_DIR"
+OUTPUT_DIR="${OUTPUT_DIR:-$PWD/수업자료/<성취기준 코드 또는 주제 — 수업마다 다른 이름>}"
+bash "$SKILL_DIR/scripts/render_all.sh" lesson.json "$OUTPUT_DIR" [FORMATS]
 ```
 
-This writes one editable `.hwpx` (the teacher deliverable — opens in 한글) per `documents[]`
-entry, named by `id` (e.g. `$OUTPUT_DIR/lesson_plan.hwpx`, `student_materials.hwpx`,
-`observation_template.hwpx`, `source_packet.hwpx`), plus `.html` and `lesson.json` working
-files. Render straight into `$OUTPUT_DIR` and leave everything the script writes in place —
-later revision turns re-render from the working files even though the teacher only sees the
-한글 documents. Then list `$OUTPUT_DIR` and confirm every document has both its `.hwpx` and
-`.html`; if either is missing or tiny, rerun the script. Present the 한글 documents to the
+**Output folder.** Give each new lesson its own subfolder (e.g. `수업자료/9사(일사)01-01`) so a
+second lesson never overwrites the first lesson's files and `lesson.json`; revision turns
+reuse the same folder.
+
+**Output formats.** `FORMATS` is an optional comma list of `html`, `txt`, `md`, `hwpx`. Omit
+it for the default `html,txt,md`. Add `hwpx` only when the teacher asks for 한글/HWPX files
+(e.g. `html,txt,md,hwpx`), and pass just the formats the teacher named when they ask for a
+subset (e.g. `hwpx` alone for "한글 파일로만 주세요"). Remember the choice for the rest of the
+conversation — revision turns render the same formats. For `hwpx`, the script writes the file
+with its built-in renderer and then has the 한글 program installed on this computer open and
+re-save it (the default output engine); if 한글 is unavailable it keeps the built-in file and
+prints `hwpx engine: python` — the document is still valid, no action needed.
+
+This writes each requested format per `documents[]` entry, named by `id` (e.g.
+`$OUTPUT_DIR/lesson_plan.html`, `lesson_plan.txt`, `lesson_plan.md`, and
+`lesson_plan.hwpx` when requested; likewise `student_materials`, `observation_template`,
+`source_packet`), plus the `lesson.json` working file. Render straight into `$OUTPUT_DIR` and
+leave everything the script writes in place — later revision turns re-render from
+`lesson.json`. Then list `$OUTPUT_DIR` and confirm every document has every requested format;
+if one is missing or tiny, rerun the script. Attach every requested format of every
+document (never `lesson.json`), and present the documents to the
 teacher together — attach the lesson plan last so it lands on top (chat surfaces stack
 newest-first). If there is no `student_materials` document, say so plainly ("이 수업은 구두
 활동 중심이라 학생 유인물이 없어요 — 학생들은 …로 활동합니다"). If the script errors, fix
-`lesson.json` (it is almost always malformed JSON) and rerun. If file generation fails
+`lesson.json` as the error message says (malformed JSON, a `from_shared` key not
+registered in `shared`, an `audience` other than teacher/student, or duplicate document ids)
+and rerun. If file generation fails
 entirely, say so clearly — do not silently fall back to a chat-only delivery.
 
 ### 5c. The satisfaction ask + iteration options (every output turn)
@@ -459,8 +477,9 @@ End the turn with EXACTLY ONE closing message that does three things, in this or
 3. Offers 3–4 high-leverage, **specific** iteration options customized to the subject and
    topic. Do not write "let me know if you want changes" — that's a non-offer. For example,
    for a middle-school social studies inquiry lesson: *"(1) 자료 묶음에 사료 1종 추가, (2)
-   수준별 학생 자료 3종(A·B·C) 분화, (3) 블록 차시(2차시 연강)로 확장, (4) 과정중심평가
-   기록지 추가 — 어느 쪽이 도움이 될까요?"*
+   수준별 학생 자료 3종(가·나·다 모둠) 분화, (3) 블록 차시(2차시 연강)로 확장, (4) 과정중심평가
+   기록지 추가 — 어느 쪽이 도움이 될까요?"* If this turn did not produce 한글 documents,
+   one of the options is to also deliver them as editable 한글(HWPX) files.
 
 ### 5d. Revisions — one edit, every artifact stays in sync
 
@@ -477,8 +496,9 @@ keep the artifacts consistent:
 - A change aimed at one document (e.g. "more workspace on the worksheet", "add a column to the
   observation grid") goes in that document's `sections` — never by forking a `shared` key into
   two variants.
-- Styling: `theme` fields (`primary`, `title_size`, `body_size`) apply to every artifact.
-  Artifacts use minimal color so they print cleanly in black-and-white; do not set
+- Styling: `theme` fields (`primary`, `title_size`, `body_size`) apply only to the HTML
+  preview (웹 문서); 한글 문서·텍스트·마크다운 are fixed-format and ignore `theme`. When the
+  teacher asks for larger/smaller text, tell them it changes only the 웹 문서. Artifacts use minimal color so they print cleanly in black-and-white; do not set
   per-section or per-phase colors.
 
 ### 5e. Supplementary artifacts in their best format

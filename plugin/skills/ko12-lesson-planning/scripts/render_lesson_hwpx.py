@@ -40,9 +40,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lesson_common import (  # noqa: E402
     Theme, answer_profile, btype, build_header, coerce_headers, coerce_marks,
     coerce_rows, expand_document, label_sep, label_text, md_tokens, meta_text,
-    preamble_blocks, resolve_callout_kind, table_row_height, workspace_height,
+    preamble_blocks, resolve_callout_kind, strip_control, table_row_height,
+    workspace_height,
 )
-from render_documents import build_doc  # noqa: E402
+from render_documents import build_doc, doc_filenames  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # 단위: hp:cellSz·hp:sz·페이지 치수는 1/100 pt. (보정본 실측: 설계표 10800=108pt)
@@ -334,7 +335,7 @@ SEC_PR = (
 
 
 def _t(text: str) -> str:
-    return f"<hp:t>{escape(str(text))}</hp:t>"
+    return f"<hp:t>{escape(strip_control(str(text)))}</hp:t>"
 
 
 def _plain(text) -> str:
@@ -450,6 +451,8 @@ class SectionWriter:
         # 4행 미만은 분할 금지: 2줄 답란이 1+1로 갈라지면 마지막 줄이 다음 쪽에
         # 고아로 남는다(5회차 실채점에서 발견 — 다 모둠 되돌아보기). 작은 표는
         # 통째로 움직여야 지시문(keepWithNext)과 함께 넘어간다.
+        if not rows:
+            return
         if splittable and len(rows) < 4:
             splittable = False
         ncols = max(len(r["cells"]) for r in rows)
@@ -814,7 +817,7 @@ def emit_number_line(w, blk, theme):
     except (TypeError, ValueError):
         ticks = None
     is_blank = ticks == 0
-    n = 10 if ticks in (None, 0) else min(max(1, ticks), 20)
+    n = 10 if ticks in (None, 0) else min(max(1, ticks), 100)
     marks = coerce_marks(blk.get("marks"))
     try:
         lo_f, hi_f = float(lo), float(hi)
@@ -833,6 +836,10 @@ def emit_number_line(w, blk, theme):
                                        CH_BOLD, PP_CENTER) if near else [], BF_NONE))
         if is_blank:
             txt = str(lo) if i == 0 else (str(hi) if i == n else "")
+        elif n > 20:
+            # 눈금 칸이 좁아 값을 모두 쓰면 겹친다 — 양 끝과 약 10칸마다 하나만 표기
+            step = -(-n // 10)
+            txt = f"{v:g}" if i in (0, n) or (i % step == 0 and n - i >= step / 2) else ""
         else:
             txt = f"{v:g}"
         tick_cells.append((_cell_paras(txt, CH_BODY, PP_CENTER) if txt else [],
@@ -1071,12 +1078,17 @@ def main() -> int:
     if docs is None:
         docs = [dict(source, id=source.get("id", Path(args.json_path).stem))]
         source = {"shared": source.get("shared", {}), "theme": source.get("theme")}
+    try:
+        stems = doc_filenames(docs)
+    except ValueError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
     count = 0
-    for entry in docs:
-        if args.only and entry.get("id") not in args.only:
+    for entry, stem in zip(docs, stems):
+        if args.only and str(entry.get("id")) not in args.only and stem not in args.only:
             continue
         merged = build_doc(source, entry)
-        out = outdir / f"{entry.get('id', 'document')}.hwpx"
+        out = outdir / f"{stem}.hwpx"
         render(merged, str(out))
         print(f"wrote {out}")
         count += 1

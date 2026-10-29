@@ -81,12 +81,16 @@ PLAN="$ROOT/plugin/skills/ko12-lesson-planning"
 DIFF="$ROOT/plugin/skills/ko12-lesson-differentiation"
 
 # 4. 재렌더 (render_all.sh가 최소 게이트 G1–G6을 자동 실행)
-cd "$ROOT/pilot/elementary"      && bash "$PLAN/scripts/render_all.sh" lesson.json out
-cd "$ROOT/pilot/middle-school"   && bash "$PLAN/scripts/render_all.sh" lesson.json out
-cd "$ROOT/pilot/high-integrated" && bash "$PLAN/scripts/render_all.sh" lesson.json out
-cd "$ROOT/pilot/elementary"      && bash "$DIFF/scripts/render_all.sh" differentiation.json out-differentiation
-cd "$ROOT/pilot/middle-school"   && bash "$DIFF/scripts/render_all.sh" differentiation.json out-differentiation
-cd "$ROOT" && bash "$PLAN/scripts/render_all.sh" tests/smoke/korean_lesson.json tests/smoke/out/ko
+# HWPX는 요청 형식이므로 hwpx를 명시하고, 엔진은 내장 렌더러로 고정한다 — 아래 검사기
+# (S·F·C·P)는 내장 렌더러 산출물을 검증한다. 한글 엔진이 재저장한 파일은 쓰지 않는 서식
+# 정의를 정리하므로 F5가 FAIL로 나올 수 있다(최소 게이트·DoD·P1 파리티는 통과 확인).
+export HWPX_ENGINE=python F=html,txt,md,hwpx
+cd "$ROOT/pilot/elementary"      && bash "$PLAN/scripts/render_all.sh" lesson.json out "$F"
+cd "$ROOT/pilot/middle-school"   && bash "$PLAN/scripts/render_all.sh" lesson.json out "$F"
+cd "$ROOT/pilot/high-integrated" && bash "$PLAN/scripts/render_all.sh" lesson.json out "$F"
+cd "$ROOT/pilot/elementary"      && bash "$DIFF/scripts/render_all.sh" differentiation.json out-differentiation "$F"
+cd "$ROOT/pilot/middle-school"   && bash "$DIFF/scripts/render_all.sh" differentiation.json out-differentiation "$F"
+cd "$ROOT" && bash "$PLAN/scripts/render_all.sh" tests/smoke/korean_lesson.json tests/smoke/out/ko "$F"
 
 # 5. 자동 검증 (커밋된 층 — 어디서나 실행 가능, stdlib)
 cd "$ROOT"
@@ -156,7 +160,7 @@ python .claude/skills/hwpx/scripts/roundtrip_hwpx.py <파일...> --outdir <임�
 
 ## LLM-judge 확장 (evals/hwpx-format/)
 
-자동 검사기가 못 보는 **시각 품질**(적정성 판단)은 `evals/hwpx-format/rubric.csv`
+자동 검사기가 못 보는 **시각 품질**(적정성 판단)은 `evals/hwpx-format/rubrics/format.csv`
 루브릭으로 LLM-judge 채점한다. 기존 evals 프레임(CSV 스키마·판정 JSON·
 aggregate.py)을 그대로 쓴다. 판정 입력은 (a) 검사기 `--json` 리포트,
 (b) HWPX 추출 텍스트, (c) 가능하면 한글 PDF 내보내기 스냅샷. 자동 검사가 fail 0을

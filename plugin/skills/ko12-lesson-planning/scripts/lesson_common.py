@@ -14,19 +14,12 @@ from __future__ import annotations
 import re
 
 # ---- render-time print-safety repair ---------------------------------------------------
-# Two failure classes survive prompt instructions and are repaired structurally instead:
-# (1) markdown pipe tables drawn inside prose fields print as literal '|' rows — convert
-#     them to real `table` blocks; (2) the ■ unknown-number symbol appearing in an artifact
-#     with no defining sentence in THAT artifact (look-fors carry ■ into the observation
-#     sheet via from_shared, where the model writes no prose) — append the skill's standard
-#     definition line to the first section that uses it.
+# Markdown pipe tables drawn inside prose fields print as literal '|' rows — a failure
+# class that survives prompt instructions, so it is repaired structurally: they become real
+# `table` blocks.
 
 _PIPE_LINE = re.compile(r"[^|\n]*\|[^|\n]+\|")            # a line with >=2 pipe chars
 _SEP_LINE = re.compile(r"^\s*\|?[\s:|\-]+\|?\s*$")        # |---|:---| separator row
-UNKNOWN_SYMBOL = "■"
-_UNKNOWN_DEFINED = re.compile(
-    r"(use|using|write|stands for|symbol|means)[^.]{0,50}■"
-    r"|■[^.]{0,50}(for the|stands for|means|is the|if you need)", re.IGNORECASE)
 
 
 def _parse_pipe_rows(lines: list[str]) -> list[list[str]]:
@@ -215,24 +208,6 @@ def _repair_pipe_tables(blk: dict) -> list[dict]:
     return out or [blk]
 
 
-def _doc_text(sections: list[dict]) -> str:
-    parts: list[str] = []
-
-    def walk(v):
-        if isinstance(v, str):
-            parts.append(v)
-        elif isinstance(v, list):
-            for x in v:
-                walk(x)
-        elif isinstance(v, dict):
-            for x in v.values():
-                walk(x)
-
-    walk(sections)
-    return "\n".join(parts)
-
-
-
 # Keys in `shared` that are document/identity metadata, never expanded as content blocks.
 _IDENTITY_KEYS = {"grade", "subject", "duration", "curriculum", "standard_code",
                   "standard_text", "prerequisite_standard", "smps"}
@@ -329,7 +304,12 @@ def expand_from_shared(key: str, shared: dict, audience: str = "teacher",
                  "label": f"성취기준 {code}".strip(),
                  "text": shared.get("standard_text", "")}]
 
-    val = shared.get(key)
+    if key not in shared:
+        # 오타 난 키가 과제를 조용히 지우면 "세 수준이 어긋날 수 없다"는 계약이 깨진다 —
+        # 렌더를 멈춰 JSON을 고치게 한다.
+        known = ", ".join(sorted(str(k) for k in shared)) or "(없음)"
+        raise ValueError(f"from_shared: shared에 없는 키 {key!r} — 등록된 키: {known}")
+    val = shared[key]
     if val is None or val == "" or val == []:
         return []
     if key in _IDENTITY_KEYS:
@@ -451,14 +431,6 @@ def expand_document(data: dict, audience: str = "teacher") -> dict:
         for s in doc["sections"]
     ]
     doc["sections"] = [_strip_heading_echo(s) for s in doc["sections"]]
-    text = _doc_text(doc["sections"])
-    if UNKNOWN_SYMBOL in text and not _UNKNOWN_DEFINED.search(text):
-        for s in doc["sections"]:
-            if UNKNOWN_SYMBOL in _doc_text([s]):
-                s.setdefault("blocks", []).append(
-                    {"type": "paragraph",
-                     "text": "*The symbol ■ stands for the unknown number.*"})
-                break
     return doc
 
 
@@ -641,9 +613,18 @@ def label_sep(label: str) -> str:
     return "." if re.fullmatch(r"\d+[a-z]?", s, re.IGNORECASE) else ":"
 
 
+_CONTROL = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
+
+
+def strip_control(text: str) -> str:
+    """XML 1.0이 금지하는 C0 제어문자를 지운다 — \\x0b(수동 줄바꿈)는 줄바꿈으로 살린다.
+    교과서·한글 문서에서 복사한 텍스트에 섞여 들어와 HWPX XML을 깨뜨린다."""
+    return _CONTROL.sub("", text.replace("\x0b", "\n"))
+
+
 def normalize_text(text) -> str:
     """Format-agnostic text fixups applied before any inline-markdown parse."""
-    t = str(text)
+    t = strip_control(str(text))
     t = re.sub(r"(?<!_)_{3,9}(?!_)", "______", t)
     t = re.sub(r"\s+\|\s+", " · ", t)
     return t

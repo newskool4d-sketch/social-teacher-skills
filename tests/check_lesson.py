@@ -1,10 +1,12 @@
 """수업 패키지 DoD 검사 (DESIGN.md §7 1단계 체크리스트).
 
 사용: python tests/check_lesson.py <lesson.json> <outdir> [--official "성취기준 공식 원문"]
+                                   [--ground-truth pilot/<p>/ground-truth.md]
 
 검사 항목:
   1. 렌더 무결성 — documents[] 전부 hwpx·html 쌍으로 나왔고 U+FFFD 없음
-  2. 성취기준 verbatim — shared.standard_text가 --official과 문자 단위로 일치
+  2. 성취기준 verbatim — shared.standard_text가 --official(또는 --ground-truth의
+     officialText)과 문자 단위로 일치
   3. 인용 1회 — 렌더된 교사 문서 전체에서 성취기준 원문이 정확히 한 번
   4. 시간 — phase_header minutes 합계 == shared.duration
   5. 3범주 — 지식·이해 / 과정·기능 / 가치·태도가 수업안에 모두 진술됨
@@ -14,6 +16,7 @@
 import argparse
 import json
 import os
+import re
 import sys
 import xml.etree.ElementTree as ET
 import zipfile
@@ -74,7 +77,16 @@ def main():
     ap.add_argument("outdir")
     ap.add_argument("--official", default=None,
                     help="학습맵 get_standard의 officialText (verbatim 대조용)")
+    ap.add_argument("--ground-truth", default=None,
+                    help="파일럿 ground-truth.md — 그 안의 \"officialText\"로 verbatim 대조")
     args = ap.parse_args()
+    if args.ground_truth and args.official is None:
+        gt = open(args.ground_truth, encoding="utf-8").read()
+        m = re.search(r'"officialText":\s*("(?:[^"\\]|\\.)*")', gt)
+        if not m:
+            print(f"DoD FAIL: {args.ground_truth}에 officialText 없음")
+            sys.exit(1)
+        args.official = json.loads(m.group(1))
 
     data = json.load(open(args.lesson, encoding="utf-8"))
     shared = data["shared"]
@@ -105,6 +117,7 @@ def main():
             failures.append(f"[verbatim] 불일치\n    lesson: {st!r}\n    official: {args.official!r}")
 
     # 3. 인용 1회 (교사 문서 기준)
+    n_fail = len(failures)
     for doc in data["documents"]:
         if doc.get("audience") != "teacher" or doc["id"] not in texts:
             continue
@@ -113,7 +126,8 @@ def main():
             failures.append(f"[인용] lesson_plan에 성취기준 원문 {n}회 (1회여야 함)")
         elif doc["id"] != "lesson_plan" and n > 1:
             failures.append(f"[인용] {doc['id']}에 성취기준 원문 {n}회")
-    print("  인용 ok: 수업안에 성취기준 원문 1회")
+    if len(failures) == n_fail:
+        print("  인용 ok: 수업안에 성취기준 원문 1회")
 
     # 4. 시간
     minutes = [b.get("minutes", 0) for d in data["documents"]
